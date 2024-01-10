@@ -5,6 +5,9 @@ namespace Hikaria.PerfectBooster.Managers;
 
 public static class BoosterImplantTemplateManager
 {
+    public static bool DisableBoosterConditions { get; set; } = false;
+    public static bool DisableBoosterNegativeEffects { get; set; } = false;
+
     public static void LoadData()
     {
         BoosterImplantTemplates.Clear();
@@ -23,11 +26,11 @@ public static class BoosterImplantTemplateManager
         for (int i = 0; i < effectCount; i++)
         {
             var effect = effectGroup.FirstOrDefault(p => p.BoosterImplantEffect == boosterImplant.Effects[i].Id);
-            float targetValue = effect.EffectMaxValue;
+            float targetValue = effect.EffectMaxValue <= 1 && DisableBoosterNegativeEffects ? 1f : effect.EffectMaxValue;
             effects[i].Value = targetValue;
         }
         boosterImplant.Effects = effects;
-        boosterImplant.Conditions = conditions.ToArray();
+        boosterImplant.Conditions = DisableBoosterConditions ? Array.Empty<uint>() : conditions.ToArray();
     }
 
     public static bool TryGetBoosterImplantTemplate(BoosterImplant boosterImplant, out BoosterImplantTemplate template, out List<BoosterImplantEffectTemplate> effectGroup, out List<uint> conditionGroup)

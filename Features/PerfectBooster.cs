@@ -12,6 +12,8 @@ internal class PerfectBooster : Feature
 {
     public override string Name => "Perfect Booster";
 
+    public override string Group => FeatureGroups.QualityOfLife;
+
     [FeatureConfig]
     public static PerfectBoosterSetting Settings { get; set; }
 
@@ -21,8 +23,12 @@ internal class PerfectBooster : Feature
         public bool EnableBoosterFarmer { get; set; } = true;
         [FSDisplayName("完美强化剂")]
         public bool EnablePerfectBooster { get; set; } = true;
-        [FSDisplayName("强化剂不消耗")]
+        [FSDisplayName("禁用强化剂消耗")]
         public bool DisableBoosterConsume { get; set; } = true;
+        [FSDisplayName("禁用强化剂条件")]
+        public bool DisableBoosterConditions { get => BoosterImplantTemplateManager.DisableBoosterConditions; set => BoosterImplantTemplateManager.DisableBoosterConditions = value; }
+        [FSDisplayName("禁用强化剂负面效果")]
+        public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
     }
 
     [ArchivePatch(typeof(BoosterImplantManager), nameof(BoosterImplantManager.OnActiveBoosterImplantsChanged))]
@@ -45,6 +51,18 @@ internal class PerfectBooster : Feature
                         BoosterImplantTemplateManager.ApplyPerfectBoosterFromTemplate(boosterImplant, effectGroup, conditions);
                     }
                 }
+            }
+        }
+    }
+
+    [ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.NewGameSession))]
+    internal static class DropServerManager__NewGameSession__Patch
+    {
+        public static void Prefix(ref uint[] boosterIds)
+        {
+            if (Settings.DisableBoosterConsume)
+            {
+                boosterIds = null;
             }
         }
     }
