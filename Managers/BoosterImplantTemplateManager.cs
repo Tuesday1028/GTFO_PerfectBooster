@@ -101,7 +101,6 @@ public static class BoosterImplantTemplateManager
             return false;
         }
 
-        Logs.LogMessage("Booster Matched");
         return true;
     }
 
