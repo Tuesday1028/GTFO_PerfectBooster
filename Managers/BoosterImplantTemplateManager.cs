@@ -93,6 +93,10 @@ public static class BoosterImplantTemplateManager
             for (int j = 0; j < CustomBoosterImplants[category].Count; j++)
             {
                 var customBoosterImplant = CustomBoosterImplants[category][j];
+                if (BoosterImplantTemplateDataBlock.GetBlock(customBoosterImplant.TemplateId) == null)
+                {
+                    continue;
+                }
                 List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
                 foreach (var effect in customBoosterImplant.Effects)
                 {

@@ -7,6 +7,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
+using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager.CustomBoosterImplant;
 
 namespace Hikaria.PerfectBooster.Features;
 
@@ -37,6 +38,7 @@ public class PerfectBooster : Feature
         [FSDisplayName("模板首选项设置")]
         public List<BoosterImplantTemplatePreference> BoosterTemplatePreferences { get => BoosterImplantTemplateManager.BoosterTemplatePreferences.ToList(); set { } }
 
+        [FSHeader("作弊选项")]
         [FSHide]
         [FSDisplayName("正面效果倍率")]
         public float BoosterPositiveEffectMultiplier { get => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier; set => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier = value; }
@@ -46,6 +48,8 @@ public class PerfectBooster : Feature
         [FSHide]
         [FSDisplayName("禁用负面效果")]
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
+
+        [FSHeader("强化剂自定义")]
         [FSHide]
         [FSDisplayName("强化剂自定义")]
         [FSDescription("自定义将导致完美强化剂与模板首选项以及其他作弊选项失效")]
@@ -54,6 +58,136 @@ public class PerfectBooster : Feature
         [FSHide]
         [FSDisplayName("通过现有强化剂生成自定义强化剂")]
         public FButton CreateCustomBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomBoosterImplantsFromInventory);
+
+        [JsonIgnore]
+        [FSHide]
+        [FSReadOnly]
+        [FSDisplayName("编辑自定义强化剂")]
+        public Dictionary<BoosterImplantCategory, CustomBoosterImplantEntryListEntry> CustomBoosterImplantsEntry
+        {
+            get
+            {
+                Dictionary<BoosterImplantCategory, CustomBoosterImplantEntryListEntry> result = new();
+                for (int i = 0; i < 3; i++)
+                {
+                    var category = (BoosterImplantCategory)i;
+                    var entries = new List<CustomBoosterImplantEntry>();
+                    for (int j = 0; j < CustomBoosterImplants[category].Count; j++)
+                    {
+                        entries.Add(new(CustomBoosterImplants[category][j]));
+                    }
+                    result[category] = new(entries);
+                }
+                return result;
+            }
+            set
+            {
+            }
+        }
+    }
+
+    public class CustomBoosterImplantEntryListEntry
+    {
+        public CustomBoosterImplantEntryListEntry(List<CustomBoosterImplantEntry> entries)
+        {
+            Entries = entries;
+        }
+
+        [FSInline]
+        [FSDisplayName("强化剂列表")]
+        public List<CustomBoosterImplantEntry> Entries { get; set; } = new();
+    }
+
+    public class CustomBoosterImplantEntry
+    {
+        public CustomBoosterImplantEntry(CustomBoosterImplant implant)
+        {
+            Implant = implant;
+        }
+
+        [FSSeparator]
+        [FSReadOnly]
+        [FSDisplayName("名称")]
+        public string Name { get => Implant.Name; set { } }
+        [FSReadOnly]
+        [FSDisplayName("类别")]
+        public BoosterImplantCategory Category { get => Implant.Category; set { } }
+        [FSReadOnly]
+        [FSDisplayName("ID")]
+        public uint TemplateId { get => Implant.TemplateId; set { } }
+
+        [FSDisplayName("效果列表")]
+        public List<CustomBoosterImplantEffectEntry> Effect
+        {
+            get
+            {
+                List<CustomBoosterImplantEffectEntry> result = new();
+                for (int i = 0; i < Implant.Effects.Count; i++)
+                {
+                    result.Add(new(Implant.Effects[i]));
+                }
+                return result;
+            }
+            set
+            {
+            }
+        }
+
+        [FSDisplayName("条件列表")]
+        public List<CustomBoosterImplantConditionEntry> Conditions
+        {
+            get
+            {
+                List<CustomBoosterImplantConditionEntry> conditions = new();
+                for (int i = 0; i < Implant.Conditions.Count; i++)
+                {
+                    conditions.Add(new(i, Implant));
+                }
+                return conditions;
+            }
+            set
+            {
+            }
+        }
+
+        [FSIgnore]
+        private CustomBoosterImplant Implant { get; set; }
+    }
+
+    public class CustomBoosterImplantEffectEntry
+    {
+        public CustomBoosterImplantEffectEntry(Effect effect)
+        {
+            Effect = effect;
+        }
+
+        [FSSeparator]
+        [FSDisplayName("效果ID")]
+        public uint Id { get => Effect.Id; set => Effect.Id = value; }
+        [FSDisplayName("效果数值")]
+        public float Value { get => Effect.Value; set => Effect.Value = value; }
+
+        [FSIgnore]
+        private Effect Effect { get; set; }
+    }
+
+    public class CustomBoosterImplantConditionEntry
+    {
+        public CustomBoosterImplantConditionEntry(int index, CustomBoosterImplant implant)
+        {
+            Index = index;
+            Implant = implant;
+        }
+
+        [FSSeparator]
+        [FSDisplayName("条件索引")]
+        public int Index { get; set; }
+
+        [FSDisplayName("条件")]
+        public uint Condition { get => Implant.Conditions[Index]; set => Implant.Conditions[Index] = value; }
+
+        [FSIgnore]
+        private CustomBoosterImplant Implant { get; set; }
     }
 
     public class BoosterImplantTemplatePreference
@@ -79,15 +213,15 @@ public class PerfectBooster : Feature
 
         [FSSeparator]
         [FSReadOnly]
-        [FSDisplayName("强化剂名称")]
+        [FSDisplayName("名称")]
         public string TemplateName { get; set; } = string.Empty;
 
         [FSReadOnly]
-        [FSDisplayName("强化剂ID")]
+        [FSDisplayName("ID")]
         public uint TemplateId { get; set; } = 0;
 
         [FSReadOnly]
-        [FSDisplayName("强化剂类别")]
+        [FSDisplayName("类别")]
         public BoosterImplantCategory TemplateCategory { get; set; } = BoosterImplantCategory._COUNT;
 
         [FSDisplayName("首选效果组索引")]
