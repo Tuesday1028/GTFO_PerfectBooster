@@ -12,7 +12,152 @@ public static class BoosterImplantTemplateManager
     public static bool DisableBoosterConditions { get; set; } = false;
     public static bool DisableBoosterNegativeEffects { get; set; } = false;
     public static bool EnableBoosterTemplatePreference { get; set; } = false;
+    public static bool EnableCustomBooster { get; set; } = false;
 
+    private const string SettingsPath = "Settings";
+
+    #region 强化剂自定义
+    public static Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>> CustomBoosterImplants { get; set; } = new();
+
+    public static void CreateCustomBoosterImplantsFromInventory()
+    {
+        CustomBoosterImplants.Clear();
+        CustomBoosterImplants = new()
+            {
+                { BoosterImplantCategory.Muted, new() },
+                { BoosterImplantCategory.Bold, new() },
+                { BoosterImplantCategory.Aggressive, new() }
+            };
+        foreach (var category in PersistentInventoryManager.Current.m_boosterImplantInventory.Categories)
+        {
+            foreach (var item in category.Inventory)
+            {
+                CustomBoosterImplants[item.Implant.Category].Add(new(item.Implant));
+            }
+        }
+    }
+
+    public static void LoadCustomBoosterImplantsFromSettings()
+    {
+        CustomBoosterImplants.Clear();
+
+        string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
+        string settingsPath = Path.Combine(dir, SettingsPath);
+        if (!Directory.Exists(settingsPath))
+        {
+            Directory.CreateDirectory(settingsPath);
+        }
+        string fullPath = Path.Combine(settingsPath, CustomBoosterImplantsFile);
+        if (!File.Exists(fullPath))
+        {
+            Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>> data = new()
+            {
+                { BoosterImplantCategory.Muted, new() },
+                { BoosterImplantCategory.Bold, new() },
+                { BoosterImplantCategory.Aggressive, new() }
+            };
+
+            File.WriteAllText(fullPath, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
+        }
+        CustomBoosterImplants = JsonConvert.DeserializeObject<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>>(File.ReadAllText(fullPath), ArchiveMod.JsonSerializerSettings)
+            ?? new()
+            {
+                { BoosterImplantCategory.Muted, new() },
+                { BoosterImplantCategory.Bold, new() },
+                { BoosterImplantCategory.Aggressive, new() }
+            };
+    }
+
+    public static void SaveCustomBoosterImplants()
+    {
+        string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
+        string settingsPath = Path.Combine(dir, SettingsPath);
+        if (!Directory.Exists(settingsPath))
+        {
+            Directory.CreateDirectory(settingsPath);
+        }
+        string fullPath = Path.Combine(settingsPath, CustomBoosterImplantsFile);
+        File.WriteAllText(fullPath, JsonConvert.SerializeObject(CustomBoosterImplants, ArchiveMod.JsonSerializerSettings));
+    }
+
+    private const string CustomBoosterImplantsFile = "CustomBoosterImplants.json";
+
+    public static void ApplyCustomBoosterImplants()
+    {
+        uint Id = 3223718U;
+        for (int i = 0; i < 3; i++)
+        {
+            var inventory = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i].Inventory;
+            inventory.Clear();
+            var category = (BoosterImplantCategory)i;
+            for (int j = 0; j < CustomBoosterImplants[category].Count; j++)
+            {
+                var customBoosterImplant = CustomBoosterImplants[category][j];
+                List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
+                foreach (var effect in customBoosterImplant.Effects)
+                {
+                    effects.Add(new() { Id = effect.Id, Param = effect.Value });
+                }
+                inventory.Add(new(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
+                {
+                    Conditions = customBoosterImplant.Conditions.ToArray(),
+                    Effects = effects.ToArray(),
+                    Id = Id,
+                    TemplateId = customBoosterImplant.TemplateId,
+                    Flags = 1U,
+                    UsesRemaining = 3
+                }));
+                Id++;
+            }
+        }
+    }
+
+    public class CustomBoosterImplant
+    {
+        public CustomBoosterImplant(BoosterImplant implant)
+        {
+            Name = implant.GetCompositPublicName(true);
+            TemplateId = implant.TemplateId;
+            Conditions = implant.Conditions.ToList();
+            Category = implant.Category;
+            Effects.Clear();
+            foreach (var effect in implant.Effects)
+            {
+                Effects.Add(new(effect));
+            }
+        }
+
+        public CustomBoosterImplant()
+        {
+        }
+
+        public string Name { get; set; } = string.Empty;
+        public BoosterImplantCategory Category { get; set; } = BoosterImplantCategory._COUNT;
+        public uint TemplateId { get; set; } = 0;
+        public List<uint> Conditions { get; set; } = new();
+        public List<Effect> Effects { get; set; } = new();
+        public int Uses { get; set; } = 3;
+
+        public class Effect
+        {
+            public Effect(BoosterImplant.Effect effect)
+            {
+                Id = effect.Id;
+                Value = effect.Value;
+            }
+
+            public Effect()
+            {
+            }
+
+            public uint Id { get; set; } = 0;
+
+            public float Value { get; set; } = 1f;
+        }
+    }
+    #endregion
+
+    #region 完美强化剂
     public static void LoadTemplateData()
     {
         BoosterImplantTemplates.Clear();
@@ -77,19 +222,18 @@ public static class BoosterImplantTemplateManager
 
     private const string PreferenceFile = "BoosterTemplatePreferences.json";
 
-    private const string SettingsPath = "Settings";
-
     public static void ApplyPerfectBoosterFromTemplate(BoosterImplant boosterImplant, List<BoosterImplantEffectTemplate> effectGroup, List<uint> conditions)
     {
-        var effectCount = boosterImplant.Effects.Count;
-        var effects = boosterImplant.Effects.ToArray();
-        for (int i = 0; i < effectCount; i++)
+        List<BoosterImplant.Effect> effects = new();
+        foreach (var effect in effectGroup)
         {
-            var effect = effectGroup.FirstOrDefault(p => p.BoosterImplantEffect == boosterImplant.Effects[i].Id);
-            float targetValue = effect.EffectMaxValue <= 1 && DisableBoosterNegativeEffects ? 1f : (effect.EffectMaxValue - 1f) * BoosterPositiveEffectMultiplier + 1f;
-            effects[i].Value = targetValue;
+            effects.Add(new()
+            {
+                Id = effect.BoosterImplantEffect,
+                Value = effect.EffectMaxValue <= 1 && DisableBoosterNegativeEffects ? 1f : (effect.EffectMaxValue - 1f) * BoosterPositiveEffectMultiplier + 1f
+            });
         }
-        boosterImplant.Effects = effects;
+        boosterImplant.Effects = effects.ToArray();
         boosterImplant.Conditions = DisableBoosterConditions ? Array.Empty<uint>() : conditions.ToArray();
     }
 
@@ -102,7 +246,7 @@ public static class BoosterImplantTemplateManager
             return false;
         }
         var preference = BoosterTemplatePreferences.FirstOrDefault(p => p.TemplateId == boosterImplant.TemplateId && p.TemplateCategory == boosterImplant.Category);
-        if (preference == null || preference.TemplateCategory == BoosterImplantCategory._COUNT)
+        if (preference == null || preference.TemplateId == 0)
         {
             return false;
         }
@@ -308,4 +452,5 @@ public static class BoosterImplantTemplateManager
         public List<List<BoosterImplantEffectTemplate>> EffectGroups { get; set; } = new();
         public List<List<uint>> ConditionGroups { get; set; } = new();
     }
+    #endregion
 }

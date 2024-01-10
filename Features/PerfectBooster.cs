@@ -5,6 +5,7 @@ using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Components;
 using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
 
 namespace Hikaria.PerfectBooster.Features;
@@ -45,7 +46,14 @@ public class PerfectBooster : Feature
         [FSHide]
         [FSDisplayName("禁用负面效果")]
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
+        [FSHide]
+        [FSDisplayName("强化剂自定义")]
+        [FSDescription("自定义将导致完美强化剂与模板首选项以及其他作弊选项失效")]
+        public bool EnableCustomBooster { get => BoosterImplantTemplateManager.EnableCustomBooster; set => BoosterImplantTemplateManager.EnableCustomBooster = value; }
 
+        [FSHide]
+        [FSDisplayName("通过现有强化剂生成自定义强化剂")]
+        public FButton CreateCustomBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomBoosterImplantsFromInventory);
     }
 
     public class BoosterImplantTemplatePreference
@@ -192,22 +200,26 @@ public class PerfectBooster : Feature
     {
         private static void Prefix()
         {
-            if (!Settings.EnablePerfectBooster)
-                return;
-
-            for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories.Count; i++)
+            if (Settings.EnableCustomBooster)
             {
-                var category = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i];
-                var inventory = category.Inventory;
-                for (int j = 0; j < inventory.Count; j++)
+                ApplyCustomBoosterImplants();
+            }
+            else if (Settings.EnablePerfectBooster)
+            {
+                for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories.Count; i++)
                 {
-                    var boosterImplant = inventory[j].Implant;
-                    if (TryGetBoosterImplantTemplate(boosterImplant, out BoosterImplantTemplate template, out var effectGroup, out var conditions))
+                    var category = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i];
+                    var inventory = category.Inventory;
+                    for (int j = 0; j < inventory.Count; j++)
                     {
-                        if (TryGetBoosterImplantTemplatePreference(boosterImplant, template, out var preferedEffectGroup, out var preferedConditionGroup))
-                            ApplyPerfectBoosterFromTemplate(boosterImplant, preferedEffectGroup, preferedConditionGroup);
-                        else
-                            ApplyPerfectBoosterFromTemplate(boosterImplant, effectGroup, conditions);
+                        var boosterImplant = inventory[j].Implant;
+                        if (TryGetBoosterImplantTemplate(boosterImplant, out BoosterImplantTemplate template, out var effectGroup, out var conditions))
+                        {
+                            if (TryGetBoosterImplantTemplatePreference(boosterImplant, template, out var preferedEffectGroup, out var preferedConditionGroup))
+                                ApplyPerfectBoosterFromTemplate(boosterImplant, preferedEffectGroup, preferedConditionGroup);
+                            else
+                                ApplyPerfectBoosterFromTemplate(boosterImplant, effectGroup, conditions);
+                        }
                     }
                 }
             }
@@ -219,7 +231,7 @@ public class PerfectBooster : Feature
     {
         public static void Prefix(ref uint[] boosterIds)
         {
-            if (Settings.DisableBoosterConsume)
+            if (Settings.DisableBoosterConsume || Settings.EnableCustomBooster)
             {
                 boosterIds = null;
             }
@@ -232,7 +244,7 @@ public class PerfectBooster : Feature
     {
         private static bool Prefix()
         {
-            return !Settings.DisableBoosterConsume;
+            return !(Settings.DisableBoosterConsume || Settings.EnableCustomBooster);
         }
     }
 
@@ -243,7 +255,11 @@ public class PerfectBooster : Feature
         {
             if (Settings.EnableBoosterFarmer)
             {
-                __result = 10000;
+                __result = 50;
+            }
+            if (Settings.EnableCustomBooster)
+            {
+                __result = 0;
             }
         }
     }
@@ -251,10 +267,12 @@ public class PerfectBooster : Feature
     public override void OnQuit()
     {
         SaveTemplatePreferences();
+        SaveCustomBoosterImplants();
     }
 
     public override void OnGameDataInitialized()
     {
         LoadTemplateData();
+        LoadCustomBoosterImplantsFromSettings();
     }
 }
