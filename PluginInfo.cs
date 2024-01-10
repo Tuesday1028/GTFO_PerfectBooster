@@ -2,9 +2,9 @@
 
 public static class PluginInfo
 {
-    public const string GUID = "Hikaria.BoosterManager";
+    public const string GUID = "Hikaria.PerfectBooster";
 
-    public const string NAME = "BoosterManager";
+    public const string NAME = "PerfectBooster";
 
     public const string VERSION = "1.0.0";
 }

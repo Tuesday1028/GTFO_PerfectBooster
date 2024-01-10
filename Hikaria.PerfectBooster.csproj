@@ -13,6 +13,9 @@
     <Reference Include="BepInEx.Unity.IL2CPP">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\core\BepInEx.Unity.IL2CPP.dll</HintPath>
     </Reference>
+    <Reference Include="Clonesoft.Json">
+      <HintPath>..\GTFO_TheArchive\lib\net60\Clonesoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="DropServerSDK-ASM">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\interop\DropServerSDK-ASM.dll</HintPath>
     </Reference>
