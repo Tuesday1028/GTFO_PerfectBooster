@@ -1,1 +1,1 @@
-# Hikaria.PerfectBooster
+# GTFO_PerfectBooster
