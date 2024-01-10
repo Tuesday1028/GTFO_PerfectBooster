@@ -35,11 +35,14 @@ public class PerfectBooster : Feature
         public bool EnableBoosterTemplatePreference { get => BoosterImplantTemplateManager.EnableBoosterTemplatePreference; set => BoosterImplantTemplateManager.EnableBoosterTemplatePreference = value; }
         [FSDisplayName("模板首选项设置")]
         public List<BoosterImplantTemplatePreference> BoosterTemplatePreferences { get => BoosterImplantTemplateManager.BoosterTemplatePreferences.ToList(); set { } }
-        [FSHeader("作弊选项")]
+
+        [FSHide]
         [FSDisplayName("正面效果倍率")]
         public float BoosterPositiveEffectMultiplier { get => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier; set => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier = value; }
+        [FSHide]
         [FSDisplayName("禁用条件")]
         public bool DisableBoosterConditions { get => BoosterImplantTemplateManager.DisableBoosterConditions; set => BoosterImplantTemplateManager.DisableBoosterConditions = value; }
+        [FSHide]
         [FSDisplayName("禁用负面效果")]
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
 
