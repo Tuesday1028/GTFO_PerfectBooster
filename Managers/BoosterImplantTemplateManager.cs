@@ -23,7 +23,7 @@ public static class BoosterImplantTemplateManager
         for (int i = 0; i < effectCount; i++)
         {
             var effect = effectGroup.FirstOrDefault(p => p.BoosterImplantEffect == boosterImplant.Effects[i].Id);
-            float targetValue = effect.EffectMaxValue > 1 ? effect.EffectMaxValue - 0.0001f : effect.EffectMaxValue + 0.0001f;
+            float targetValue = effect.EffectMaxValue;
             effects[i].Value = targetValue;
         }
         boosterImplant.Effects = effects;
@@ -32,10 +32,9 @@ public static class BoosterImplantTemplateManager
 
     public static bool TryGetBoosterImplantTemplate(BoosterImplant boosterImplant, out BoosterImplantTemplate template, out List<BoosterImplantEffectTemplate> effectGroup, out List<uint> conditionGroup)
     {
-        effectGroup = null;
-        conditionGroup = null;
+        effectGroup = new();
+        conditionGroup = new();
         uint persistenID = boosterImplant.TemplateId;
-        Logs.LogMessage($"{boosterImplant.GetCompositPublicName()}, {boosterImplant.TemplateId}");
         if (!BoosterImplantTemplates.TryGetValue(persistenID, out template))
         {
             return false;
