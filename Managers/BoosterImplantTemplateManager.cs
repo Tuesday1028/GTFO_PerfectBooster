@@ -113,6 +113,7 @@ public static class BoosterImplantTemplateManager
                 inventory.Add(item);
                 item.Implant.InstanceId = Id;
                 item.Implant.Uses = (int)item.Implant.Template.DurationRange.y;
+                customBoosterImplant.Name = item.Implant.GetCompositPublicName(true);
                 Id++;
             }
         }
