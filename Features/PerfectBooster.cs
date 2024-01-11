@@ -64,6 +64,10 @@ public class PerfectBooster : Feature
         [FSDisplayName("通过配置文件重载自定义强化剂")]
         public FButton LoadCustomBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂", LoadCustomBoosterImplantsFromSettings);
 
+        [FSHide]
+        [FSDisplayName("重载自定义强化剂")]
+        public FButton ApplyCustomBoosters { get; set; } = new("重载", "重载自定义强化剂", ApplyCustomBoosterImplants);
+
         [JsonIgnore]
         [FSHide]
         [FSReadOnly]
