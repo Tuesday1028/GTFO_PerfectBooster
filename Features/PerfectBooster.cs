@@ -8,7 +8,8 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
-using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager.CustomBoosterImplant;
+using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager;
+using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager.CustomBoosterImplant;
 
 namespace Hikaria.PerfectBooster.Features;
 
@@ -112,6 +113,7 @@ public class PerfectBooster : Feature
         public CustomBoosterImplantEntry(CustomBoosterImplant implant)
         {
             Implant = implant;
+            Modifier = new(implant);
         }
 
         [FSSeparator]
@@ -159,7 +161,100 @@ public class PerfectBooster : Feature
             }
         }
 
+        [FSDisplayName("修改")]
+        public BoosterImplantModifier Modifier { get; set; }
+
         [FSIgnore]
+        private CustomBoosterImplant Implant { get; set; }
+    }
+
+    public enum ModifyType
+    {
+        Add,
+        Remove,
+        Modify
+    }
+
+    public enum ModifyTarget
+    {
+        Effect,
+        Condition
+    }
+
+    public class BoosterImplantModifier
+    {
+        public BoosterImplantModifier(CustomBoosterImplant implant)
+        {
+            Implant = implant;
+            Modify = new FButton("应用", "应用修改", DoModify);
+        }
+
+        [FSDisplayName("ID")]
+        public uint Id { get; set; } = 0;
+
+        [FSDisplayName("值")]
+        public float Value { get; set; } = 1f;
+
+        [FSDisplayName("修改模式")]
+        public ModifyType type { get; set; } = ModifyType.Modify;
+
+        [FSDisplayName("修改对象")]
+        public ModifyTarget target { get; set; } = ModifyTarget.Effect;
+
+        [FSDisplayName("应用修改")]
+        public FButton Modify { get; set; }
+
+        private void DoModify()
+        {
+            var effects = Implant.Effects;
+            var conditions = Implant.Conditions;
+            switch (type)
+            {
+                case ModifyType.Modify:
+                    if (target == ModifyTarget.Effect)
+                    {
+                        var index = effects.FindIndex(p => p.Id == Id);
+                        if (index == -1) return;
+                        effects[index].Value = Value;
+                    }
+                    else
+                    {
+                        var index = conditions.FindIndex(p => p == Id);
+                        if (index == -1) return;
+                        conditions[index] = Id;
+                    }
+                    break;
+                case ModifyType.Add:
+                    if (target == ModifyTarget.Effect)
+                    {
+                        var index = effects.FindIndex(p => p.Id == Id);
+                        if (index != -1) return;
+                        effects.Add(new() { Id = Id, Value = Value });
+                    }
+                    else
+                    {
+                        var index = conditions.FindIndex(p => p == Id);
+                        if (index != -1) return;
+                        conditions.Add(Id);
+                    }
+                    break;
+                case ModifyType.Remove:
+                    if (target == ModifyTarget.Effect)
+                    {
+                        var index = effects.FindIndex(p => p.Id == Id);
+                        if (index == -1) return;
+                        effects.RemoveAt(index);
+                    }
+                    else
+                    {
+                        var index = conditions.FindIndex(p => p == Id);
+                        if (index == -1) return;
+                        conditions.RemoveAt(index);
+                    }
+                    break;
+            }
+        }
+
         private CustomBoosterImplant Implant { get; set; }
     }
 
