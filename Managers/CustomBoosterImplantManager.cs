@@ -43,20 +43,20 @@ namespace Hikaria.PerfectBooster.Managers
             if (!File.Exists(fullPath))
             {
                 Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>> data = new()
-            {
-                { BoosterImplantCategory.Muted, new() },
-                { BoosterImplantCategory.Bold, new() },
-                { BoosterImplantCategory.Aggressive, new() }
-            };
+                {
+                    { BoosterImplantCategory.Muted, new() },
+                    { BoosterImplantCategory.Bold, new() },
+                    { BoosterImplantCategory.Aggressive, new() }
+                };
 
                 File.WriteAllText(fullPath, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
             }
             CustomBoosterImplants = JsonConvert.DeserializeObject<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>>(File.ReadAllText(fullPath), ArchiveMod.JsonSerializerSettings)
                 ?? new()
                 {
-                { BoosterImplantCategory.Muted, new() },
-                { BoosterImplantCategory.Bold, new() },
-                { BoosterImplantCategory.Aggressive, new() }
+                    { BoosterImplantCategory.Muted, new() },
+                    { BoosterImplantCategory.Bold, new() },
+                    { BoosterImplantCategory.Aggressive, new() }
                 };
         }
 

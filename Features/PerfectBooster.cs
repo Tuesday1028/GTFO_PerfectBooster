@@ -1,6 +1,7 @@
 ﻿using BoosterImplants;
 using CellMenu;
 using Clonesoft.Json;
+using DropServer.BoosterImplants;
 using GameData;
 using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
@@ -51,6 +52,10 @@ public class PerfectBooster : Feature
         [FSHide]
         [FSDisplayName("禁用负面效果")]
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
+        
+        [FSHide]
+        [FSDisplayName("强化剂数量限制")]
+        public int InventoryLimitPerCategory { get; set; } = 20;
 
         [FSHide]
         [FSDisplayName("强化剂自定义")]
@@ -520,6 +525,14 @@ public class PerfectBooster : Feature
                 __result = 0;
             }
         }
+    }
+
+    public override void Init()
+    {
+        BoosterImplantConstants.BASIC_INVENTORY_LIMIT = Settings.InventoryLimitPerCategory;
+        BoosterImplantConstants.ADVANCED_INVENTORY_LIMIT = Settings.InventoryLimitPerCategory;
+        BoosterImplantConstants.SPECIALIZED_INVENTORY_LIMIT = Settings.InventoryLimitPerCategory;
+        BoosterImplantConstants.InventoryLimitPerCategory = new int[3] { Settings.InventoryLimitPerCategory, Settings.InventoryLimitPerCategory, Settings.InventoryLimitPerCategory };
     }
 
     public override void OnQuit()
