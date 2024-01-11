@@ -39,7 +39,6 @@ public class PerfectBooster : Feature
         [FSDisplayName("模板首选项设置")]
         public List<BoosterImplantTemplatePreference> BoosterTemplatePreferences { get => BoosterImplantTemplateManager.BoosterTemplatePreferences.ToList(); set { } }
 
-        [FSHeader("作弊选项")]
         [FSHide]
         [FSDisplayName("正面效果倍率")]
         public float BoosterPositiveEffectMultiplier { get => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier; set => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier = value; }
@@ -50,8 +49,7 @@ public class PerfectBooster : Feature
         [FSDisplayName("禁用负面效果")]
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
 
-        [FSHeader("强化剂自定义")]
-        //[FSHide]
+        [FSHide]
         [FSDisplayName("强化剂自定义")]
         [FSDescription("自定义将导致完美强化剂与模板首选项以及其他作弊选项失效")]
         public bool EnableCustomBooster { get => BoosterImplantTemplateManager.EnableCustomBooster; set => BoosterImplantTemplateManager.EnableCustomBooster = value; }
