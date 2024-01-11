@@ -36,6 +36,8 @@ public class PerfectBooster : Feature
         [FSHeader("模板首选项")]
         [FSDisplayName("启用模板首选项")]
         public bool EnableBoosterTemplatePreference { get => BoosterImplantTemplateManager.EnableBoosterTemplatePreference; set => BoosterImplantTemplateManager.EnableBoosterTemplatePreference = value; }
+
+        [JsonIgnore]
         [FSDisplayName("模板首选项设置")]
         public List<BoosterImplantTemplatePreference> BoosterTemplatePreferences { get => BoosterImplantTemplateManager.BoosterTemplatePreferences.ToList(); set { } }
 
