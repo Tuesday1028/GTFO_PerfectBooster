@@ -109,10 +109,10 @@ public static class BoosterImplantTemplateManager
                     Id = Id,
                     TemplateId = customBoosterImplant.TemplateId,
                     Flags = 1U,
-                    UsesRemaining = 3
                 });
                 inventory.Add(item);
                 item.Implant.InstanceId = Id;
+                item.Implant.Uses = (int)item.Implant.Template.DurationRange.y;
                 Id++;
             }
         }
@@ -142,7 +142,6 @@ public static class BoosterImplantTemplateManager
         public uint TemplateId { get; set; } = 0;
         public List<uint> Conditions { get; set; } = new();
         public List<Effect> Effects { get; set; } = new();
-        public int Uses { get; set; } = 3;
 
         public class Effect
         {
