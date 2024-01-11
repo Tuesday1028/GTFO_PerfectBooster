@@ -59,6 +59,10 @@ public class PerfectBooster : Feature
         [FSDisplayName("通过现有强化剂生成自定义强化剂")]
         public FButton CreateCustomBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomBoosterImplantsFromInventory);
 
+        [FSHide]
+        [FSDisplayName("通过配置文件重载自定义强化剂")]
+        public FButton LoadCustomBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂", LoadCustomBoosterImplantsFromSettings);
+
         [JsonIgnore]
         [FSHide]
         [FSReadOnly]
@@ -179,10 +183,10 @@ public class PerfectBooster : Feature
             Implant = implant;
         }
 
-        [FSSeparator]
-        [FSDisplayName("条件索引")]
+        [FSIgnore]
         public int Index { get; set; }
 
+        [FSSeparator]
         [FSDisplayName("条件")]
         public uint Condition { get => Implant.Conditions[Index]; set => Implant.Conditions[Index] = value; }
 
