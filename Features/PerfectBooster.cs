@@ -1,4 +1,5 @@
 ﻿using BoosterImplants;
+using CellMenu;
 using Clonesoft.Json;
 using GameData;
 using Hikaria.PerfectBooster.Managers;
@@ -50,7 +51,7 @@ public class PerfectBooster : Feature
         public bool DisableBoosterNegativeEffects { get => BoosterImplantTemplateManager.DisableBoosterNegativeEffects; set => BoosterImplantTemplateManager.DisableBoosterNegativeEffects = value; }
 
         [FSHeader("强化剂自定义")]
-        [FSHide]
+        //[FSHide]
         [FSDisplayName("强化剂自定义")]
         [FSDescription("自定义将导致完美强化剂与模板首选项以及其他作弊选项失效")]
         public bool EnableCustomBooster { get => BoosterImplantTemplateManager.EnableCustomBooster; set => BoosterImplantTemplateManager.EnableCustomBooster = value; }
@@ -333,16 +334,27 @@ public class PerfectBooster : Feature
         }
     }
 
+    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.Setup))]
+    private class PersistentInventoryManager__Setup__Patch
+    {
+        private static void Postfix(PersistentInventoryManager __instance)
+        {
+            __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
+            {
+                if (Settings.EnableCustomBooster)
+                {
+                    ApplyCustomBoosterImplants();
+                }
+            });
+        }
+    }
+
     [ArchivePatch(typeof(BoosterImplantManager), nameof(BoosterImplantManager.OnActiveBoosterImplantsChanged))]
     private class BoosterImplantManager__OnActiveBoosterImplantsChanged__Patch
     {
         private static void Prefix()
         {
-            if (Settings.EnableCustomBooster)
-            {
-                ApplyCustomBoosterImplants();
-            }
-            else if (Settings.EnablePerfectBooster)
+            if (!Settings.EnableCustomBooster && Settings.EnablePerfectBooster)
             {
                 for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories.Count; i++)
                 {
@@ -361,6 +373,15 @@ public class PerfectBooster : Feature
                     }
                 }
             }
+        }
+    }
+
+    [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.ProcessBoosterImplantEvents))]
+    private class CM_PageLoadout__ProcessBoosterImplantEvents__Patch
+    {
+        private static bool Prefix()
+        {
+            return false;
         }
     }
 

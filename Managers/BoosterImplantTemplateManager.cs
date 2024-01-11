@@ -102,7 +102,7 @@ public static class BoosterImplantTemplateManager
                 {
                     effects.Add(new() { Id = effect.Id, Param = effect.Value });
                 }
-                inventory.Add(new(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
+                var item = new BoosterImplantInventoryItem(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
                 {
                     Conditions = customBoosterImplant.Conditions.ToArray(),
                     Effects = effects.ToArray(),
@@ -110,7 +110,9 @@ public static class BoosterImplantTemplateManager
                     TemplateId = customBoosterImplant.TemplateId,
                     Flags = 1U,
                     UsesRemaining = 3
-                }));
+                });
+                inventory.Add(item);
+                item.Implant.InstanceId = Id;
                 Id++;
             }
         }
