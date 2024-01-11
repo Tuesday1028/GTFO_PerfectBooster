@@ -61,12 +61,12 @@ public class PerfectBooster : Feature
         public FButton CreateCustomBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomBoosterImplantsFromInventory);
 
         [FSHide]
-        [FSDisplayName("通过配置文件重载自定义强化剂")]
-        public FButton LoadCustomBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂", LoadCustomBoosterImplantsFromSettings);
+        [FSDisplayName("通过设置文件重载自定义强化剂")]
+        public FButton LoadCustomBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂设置", LoadCustomBoosterImplantsFromSettings);
 
         [FSHide]
-        [FSDisplayName("重载自定义强化剂")]
-        public FButton ApplyCustomBoosters { get; set; } = new("重载", "重载自定义强化剂", ApplyCustomBoosterImplants);
+        [FSDisplayName("应用自定义强化剂")]
+        public FButton ApplyCustomBoosters { get; set; } = new("应用", "应用自定义强化剂", ApplyCustomBoosterImplants);
 
         [JsonIgnore]
         [FSHide]
