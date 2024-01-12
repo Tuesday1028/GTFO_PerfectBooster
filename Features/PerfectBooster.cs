@@ -161,6 +161,9 @@ public class PerfectBooster : Feature
             }
         }
 
+        [FSDisplayName("状态")]
+        public bool Enabled { get => Implant.Enabled; set => Implant.Enabled = value; }
+
         [FSDisplayName("修改")]
         public BoosterImplantModifier Modifier { get; set; }
 

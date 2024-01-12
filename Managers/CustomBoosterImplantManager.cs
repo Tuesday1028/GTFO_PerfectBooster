@@ -85,11 +85,19 @@ namespace Hikaria.PerfectBooster.Managers
                 for (int j = 0; j < CustomBoosterImplants[category].Count; j++)
                 {
                     var customBoosterImplant = CustomBoosterImplants[category][j];
+                    if (!customBoosterImplant.Enabled)
+                    {
+                        continue;
+                    }
                     if (BoosterImplantTemplateDataBlock.GetBlock(customBoosterImplant.TemplateId) == null)
                     {
                         continue;
                     }
                     List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
+                    if (customBoosterImplant.Effects.Any(p => p.Id == 0) || customBoosterImplant.Conditions.Any(p => p == 0))
+                    {
+                        continue;
+                    }
                     foreach (var effect in customBoosterImplant.Effects)
                     {
                         effects.Add(new() { Id = effect.Id, Param = effect.Value });
@@ -135,6 +143,8 @@ namespace Hikaria.PerfectBooster.Managers
             public uint TemplateId { get; set; } = 0;
             public List<uint> Conditions { get; set; } = new();
             public List<Effect> Effects { get; set; } = new();
+
+            public bool Enabled { get; set; } = false;
 
             public class Effect
             {
