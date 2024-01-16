@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP;
 using TheArchive;
 using TheArchive.Core;
+using TheArchive.Core.Localization;
 
 namespace Hikaria.PerfectBooster;
 
@@ -12,7 +13,7 @@ public class EntryPoint : BasePlugin, IArchiveModule
     {
         Instance = this;
 
-        ArchiveMod.RegisterModule(typeof(EntryPoint));
+        ArchiveMod.RegisterArchiveModule(typeof(EntryPoint));
 
         Logs.LogMessage("OK");
     }
@@ -39,4 +40,12 @@ public class EntryPoint : BasePlugin, IArchiveModule
     public ArchiveLegacyPatcher Patcher { get; set; }
 
     public static EntryPoint Instance { get; private set; }
+
+    public string ModuleGroup => "Perfect Booster";
+
+    public Dictionary<Language, string> ModuleGroupLanguages => new()
+    {
+        { Language.Chinese, "完美强化剂" },
+        { Language.English, "Perfect Booster" }
+    };
 }

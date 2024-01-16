@@ -1,20 +1,21 @@
-﻿using Clonesoft.Json;
-using GameData;
-using System.Reflection;
-using TheArchive;
+﻿using GameData;
+using TheArchive.Core.ModulesAPI;
 
 namespace Hikaria.PerfectBooster.Managers
 {
     public static class CustomBoosterImplantManager
     {
-        private const string SettingsPath = "Settings";
-
-        public static Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>> CustomBoosterImplants { get; set; } = new();
+        public static ModuleSetting<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
+        new()
+        {
+            { BoosterImplantCategory.Muted, new() },
+            { BoosterImplantCategory.Bold, new() },
+            { BoosterImplantCategory.Aggressive, new() }
+        });
 
         public static void CreateCustomBoosterImplantsFromInventory()
         {
-            CustomBoosterImplants.Clear();
-            CustomBoosterImplants = new()
+            CustomBoosterImplants.Value = new()
             {
                 { BoosterImplantCategory.Muted, new() },
                 { BoosterImplantCategory.Bold, new() },
@@ -24,55 +25,10 @@ namespace Hikaria.PerfectBooster.Managers
             {
                 foreach (var item in category.Inventory)
                 {
-                    CustomBoosterImplants[item.Implant.Category].Add(new(item.Implant));
+                    CustomBoosterImplants.Value[item.Implant.Category].Add(new(item.Implant));
                 }
             }
         }
-
-        public static void LoadCustomBoosterImplantsFromSettings()
-        {
-            CustomBoosterImplants.Clear();
-
-            string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
-            string settingsPath = Path.Combine(dir, SettingsPath);
-            if (!Directory.Exists(settingsPath))
-            {
-                Directory.CreateDirectory(settingsPath);
-            }
-            string fullPath = Path.Combine(settingsPath, CustomBoosterImplantsFile);
-            if (!File.Exists(fullPath))
-            {
-                Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>> data = new()
-                {
-                    { BoosterImplantCategory.Muted, new() },
-                    { BoosterImplantCategory.Bold, new() },
-                    { BoosterImplantCategory.Aggressive, new() }
-                };
-
-                File.WriteAllText(fullPath, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
-            }
-            CustomBoosterImplants = JsonConvert.DeserializeObject<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>>(File.ReadAllText(fullPath), ArchiveMod.JsonSerializerSettings)
-                ?? new()
-                {
-                    { BoosterImplantCategory.Muted, new() },
-                    { BoosterImplantCategory.Bold, new() },
-                    { BoosterImplantCategory.Aggressive, new() }
-                };
-        }
-
-        public static void SaveCustomBoosterImplants()
-        {
-            string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
-            string settingsPath = Path.Combine(dir, SettingsPath);
-            if (!Directory.Exists(settingsPath))
-            {
-                Directory.CreateDirectory(settingsPath);
-            }
-            string fullPath = Path.Combine(settingsPath, CustomBoosterImplantsFile);
-            File.WriteAllText(fullPath, JsonConvert.SerializeObject(CustomBoosterImplants, ArchiveMod.JsonSerializerSettings));
-        }
-
-        private const string CustomBoosterImplantsFile = "CustomBoosterImplants.json";
 
         public static void ApplyCustomBoosterImplants()
         {
@@ -82,9 +38,9 @@ namespace Hikaria.PerfectBooster.Managers
                 var inventory = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i].Inventory;
                 inventory.Clear();
                 var category = (BoosterImplantCategory)i;
-                for (int j = 0; j < CustomBoosterImplants[category].Count; j++)
+                for (int j = 0; j < CustomBoosterImplants.Value[category].Count; j++)
                 {
-                    var customBoosterImplant = CustomBoosterImplants[category][j];
+                    var customBoosterImplant = CustomBoosterImplants.Value[category][j];
                     if (!customBoosterImplant.Enabled)
                     {
                         continue;

@@ -1,7 +1,5 @@
-﻿using Clonesoft.Json;
-using GameData;
-using System.Reflection;
-using TheArchive;
+﻿using GameData;
+using TheArchive.Core.ModulesAPI;
 using static Hikaria.PerfectBooster.Features.PerfectBooster;
 
 namespace Hikaria.PerfectBooster.Managers;
@@ -14,9 +12,7 @@ public static class BoosterImplantTemplateManager
     public static bool EnableBoosterTemplatePreference { get; set; } = false;
     public static bool EnableCustomBooster { get; set; } = false;
 
-    private const string SettingsPath = "Settings";
-
-    public static void LoadTemplateData()
+    private static void LoadTemplateData()
     {
         BoosterImplantTemplates.Clear();
         var templates = BoosterImplantTemplateDataBlock.GetAllBlocksForEditor();
@@ -25,60 +21,6 @@ public static class BoosterImplantTemplateManager
             BoosterImplantTemplates.Add(new(templates[i]));
         }
     }
-
-    public static void LoadTemplatePreferences()
-    {
-        BoosterTemplatePreferences.Clear();
-        string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
-        string settingsPath = Path.Combine(dir, SettingsPath);
-        if (!Directory.Exists(settingsPath))
-        {
-            Directory.CreateDirectory(settingsPath);
-        }
-        string fullPath = Path.Combine(settingsPath, PreferenceFile);
-        if (!File.Exists(fullPath))
-        {
-            List<BoosterImplantTemplatePreference> data = new();
-            foreach (var template in BoosterImplantTemplates)
-            {
-                data.Add(new(template));
-            }
-            File.WriteAllText(fullPath, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
-        }
-        BoosterTemplatePreferences = JsonConvert.DeserializeObject<HashSet<BoosterImplantTemplatePreference>>(File.ReadAllText(fullPath), ArchiveMod.JsonSerializerSettings) ?? new();
-
-        foreach (var template in BoosterImplantTemplates)
-        {
-            if (!BoosterTemplatePreferences.Any(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory))
-            {
-                BoosterTemplatePreferences.Add(new(template));
-            }
-            else
-            {
-                var pref = BoosterTemplatePreferences.FirstOrDefault(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory);
-                BoosterTemplatePreferences.Remove(pref);
-                BoosterTemplatePreferences.Add(new(template)
-                {
-                    EffectsGroupIndex = pref.EffectsGroupIndex,
-                    ConditionsGroupIndex = pref.ConditionsGroupIndex
-                });
-            }
-        }
-    }
-
-    public static void SaveTemplatePreferences()
-    {
-        string dir = Path.GetDirectoryName(Assembly.GetAssembly(typeof(BoosterImplantTemplateManager)).Location);
-        string settingsPath = Path.Combine(dir, SettingsPath);
-        if (!Directory.Exists(settingsPath))
-        {
-            Directory.CreateDirectory(settingsPath);
-        }
-        string fullPath = Path.Combine(settingsPath, PreferenceFile);
-        File.WriteAllText(fullPath, JsonConvert.SerializeObject(BoosterTemplatePreferences, ArchiveMod.JsonSerializerSettings));
-    }
-
-    private const string PreferenceFile = "BoosterTemplatePreferences.json";
 
     public static void ApplyPerfectBoosterFromTemplate(BoosterImplant boosterImplant, List<BoosterImplantEffectTemplate> effectGroup, List<uint> conditions)
     {
@@ -103,7 +45,7 @@ public static class BoosterImplantTemplateManager
         {
             return false;
         }
-        var preference = BoosterTemplatePreferences.FirstOrDefault(p => p.TemplateId == boosterImplant.TemplateId && p.TemplateCategory == boosterImplant.Category);
+        var preference = BoosterTemplatePreferences.Value.FirstOrDefault(p => p.TemplateId == boosterImplant.TemplateId && p.TemplateCategory == boosterImplant.Category);
         if (preference == null || preference.TemplateId == 0)
         {
             return false;
@@ -195,9 +137,40 @@ public static class BoosterImplantTemplateManager
         return true;
     }
 
-    public static HashSet<BoosterImplantTemplate> BoosterImplantTemplates = new();
+    public static List<BoosterImplantTemplate> BoosterImplantTemplates { get; } = new();
 
-    public static HashSet<BoosterImplantTemplatePreference> BoosterTemplatePreferences = new();
+    public static ModuleSetting<List<BoosterImplantTemplatePreference>> BoosterTemplatePreferences { get; set; } = new("BoosterTemplatePreferences", new(), () =>
+    {
+        if (!BoosterTemplatePreferences.Value.Any())
+        {
+            List<BoosterImplantTemplatePreference> data = new();
+            foreach (var template in BoosterImplantTemplates)
+            {
+                data.Add(new(template));
+            }
+            BoosterTemplatePreferences.Value = data;
+        }
+
+        LoadTemplateData();
+
+        foreach (var template in BoosterImplantTemplates)
+        {
+            if (!BoosterTemplatePreferences.Value.Any(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory))
+            {
+                BoosterTemplatePreferences.Value.Add(new(template));
+            }
+            else
+            {
+                var pref = BoosterTemplatePreferences.Value.FirstOrDefault(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory);
+                BoosterTemplatePreferences.Value.Remove(pref);
+                BoosterTemplatePreferences.Value.Add(new(template)
+                {
+                    EffectsGroupIndex = pref.EffectsGroupIndex,
+                    ConditionsGroupIndex = pref.ConditionsGroupIndex
+                });
+            }
+        }
+    }, WhenToLoad.AfterGameDataInited);
 
     public class BoosterImplantEffectTemplate
     {

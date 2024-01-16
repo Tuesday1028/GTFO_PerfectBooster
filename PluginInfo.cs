@@ -6,5 +6,5 @@ public static class PluginInfo
 
     public const string NAME = "PerfectBooster";
 
-    public const string VERSION = "1.0.6";
+    public const string VERSION = "1.0.7";
 }
