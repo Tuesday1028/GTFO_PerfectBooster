@@ -15,7 +15,7 @@ namespace Hikaria.PerfectBooster.Managers
 
         public static void CreateCustomBoosterImplantsFromInventory()
         {
-            CustomBoosterImplants.Value = new()
+            CustomeBoosterImplants.Value = new()
             {
                 { BoosterImplantCategory.Muted, new() },
                 { BoosterImplantCategory.Bold, new() },
