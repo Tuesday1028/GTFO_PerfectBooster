@@ -10,7 +10,7 @@ public static class BoosterImplantTemplateManager
     public static bool DisableBoosterConditions { get; set; } = false;
     public static bool DisableBoosterNegativeEffects { get; set; } = false;
     public static bool EnableBoosterTemplatePreference { get; set; } = false;
-    public static bool EnableCustomeBooster { get; set; } = false;
+    public static bool EnableCustomBooster { get; set; } = false;
 
     private static void LoadTemplateData()
     {

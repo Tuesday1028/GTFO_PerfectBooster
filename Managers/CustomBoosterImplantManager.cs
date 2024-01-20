@@ -3,9 +3,9 @@ using TheArchive.Core.ModulesAPI;
 
 namespace Hikaria.PerfectBooster.Managers
 {
-    public static class CustomeBoosterImplantManager
+    public static class CustomBoosterImplantManager
     {
-        public static ModuleSetting<Dictionary<BoosterImplantCategory, List<CustomeBoosterImplant>>> CustomeBoosterImplants { get; set; } = new("CustomeBoosterImplants",
+        public static ModuleSetting<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
         new()
         {
             { BoosterImplantCategory.Muted, new() },
@@ -13,9 +13,9 @@ namespace Hikaria.PerfectBooster.Managers
             { BoosterImplantCategory.Aggressive, new() }
         });
 
-        public static void CreateCustomeBoosterImplantsFromInventory()
+        public static void CreateCustomBoosterImplantsFromInventory()
         {
-            CustomeBoosterImplants.Value = new()
+            CustomBoosterImplants.Value = new()
             {
                 { BoosterImplantCategory.Muted, new() },
                 { BoosterImplantCategory.Bold, new() },
@@ -25,12 +25,12 @@ namespace Hikaria.PerfectBooster.Managers
             {
                 foreach (var item in category.Inventory)
                 {
-                    CustomeBoosterImplants.Value[item.Implant.Category].Add(new(item.Implant));
+                    CustomBoosterImplants.Value[item.Implant.Category].Add(new(item.Implant));
                 }
             }
         }
 
-        public static void ApplyCustomeBoosterImplants()
+        public static void ApplyCustomBoosterImplants()
         {
             uint Id = 3223718U;
             for (int i = 0; i < 3; i++)
@@ -38,46 +38,46 @@ namespace Hikaria.PerfectBooster.Managers
                 var inventory = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i].Inventory;
                 inventory.Clear();
                 var category = (BoosterImplantCategory)i;
-                for (int j = 0; j < CustomeBoosterImplants.Value[category].Count; j++)
+                for (int j = 0; j < CustomBoosterImplants.Value[category].Count; j++)
                 {
-                    var CustomeBoosterImplant = CustomeBoosterImplants.Value[category][j];
-                    if (!CustomeBoosterImplant.Enabled)
+                    var CustomBoosterImplant = CustomBoosterImplants.Value[category][j];
+                    if (!CustomBoosterImplant.Enabled)
                     {
                         continue;
                     }
-                    if (BoosterImplantTemplateDataBlock.GetBlock(CustomeBoosterImplant.TemplateId) == null)
+                    if (BoosterImplantTemplateDataBlock.GetBlock(CustomBoosterImplant.TemplateId) == null)
                     {
                         continue;
                     }
                     List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
-                    if (CustomeBoosterImplant.Effects.Any(p => p.Id == 0) || CustomeBoosterImplant.Conditions.Any(p => p == 0))
+                    if (CustomBoosterImplant.Effects.Any(p => p.Id == 0) || CustomBoosterImplant.Conditions.Any(p => p == 0))
                     {
                         continue;
                     }
-                    foreach (var effect in CustomeBoosterImplant.Effects)
+                    foreach (var effect in CustomBoosterImplant.Effects)
                     {
                         effects.Add(new() { Id = effect.Id, Param = effect.Value });
                     }
                     var item = new BoosterImplantInventoryItem(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
                     {
-                        Conditions = CustomeBoosterImplant.Conditions.ToArray(),
+                        Conditions = CustomBoosterImplant.Conditions.ToArray(),
                         Effects = effects.ToArray(),
                         Id = Id,
-                        TemplateId = CustomeBoosterImplant.TemplateId,
+                        TemplateId = CustomBoosterImplant.TemplateId,
                         Flags = 1U,
                     });
                     inventory.Add(item);
                     item.Implant.InstanceId = Id;
                     item.Implant.Uses = (int)item.Implant.Template.DurationRange.y;
-                    CustomeBoosterImplant.Name = item.Implant.GetCompositPublicName(true);
+                    CustomBoosterImplant.Name = item.Implant.GetCompositPublicName(true);
                     Id++;
                 }
             }
         }
 
-        public class CustomeBoosterImplant
+        public class CustomBoosterImplant
         {
-            public CustomeBoosterImplant(BoosterImplant implant)
+            public CustomBoosterImplant(BoosterImplant implant)
             {
                 Name = implant.GetCompositPublicName(true);
                 TemplateId = implant.TemplateId;
@@ -90,7 +90,7 @@ namespace Hikaria.PerfectBooster.Managers
                 }
             }
 
-            public CustomeBoosterImplant()
+            public CustomBoosterImplant()
             {
             }
 

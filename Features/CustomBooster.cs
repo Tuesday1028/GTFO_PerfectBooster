@@ -5,22 +5,22 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
-using static Hikaria.PerfectBooster.Managers.CustomeBoosterImplantManager;
-using static Hikaria.PerfectBooster.Managers.CustomeBoosterImplantManager.CustomeBoosterImplant;
+using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager;
+using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager.CustomBoosterImplant;
 
 namespace Hikaria.PerfectBooster.Features;
 
 [DisallowInGameToggle]
 [EnableFeatureByDefault]
 [HideInModSettings]
-public class CustomeBooster : Feature
+public class CustomBooster : Feature
 {
-    public override string Name => "Custome Booster";
+    public override string Name => "Custom Booster";
 
     [FeatureConfig]
-    public static CustomeBoosterSetting Settings { get; set; }
+    public static CustomBoosterSetting Settings { get; set; }
 
-    public class CustomeBoosterSetting
+    public class CustomBoosterSetting
     {
         [FSDisplayName("正面效果倍率")]
         public float BoosterPositiveEffectMultiplier { get => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier; set => BoosterImplantTemplateManager.BoosterPositiveEffectMultiplier = value; }
@@ -33,32 +33,32 @@ public class CustomeBooster : Feature
 
         [FSDisplayName("强化剂自定义")]
         [FSDescription("自定义将导致完美强化剂与模板首选项以及其他作弊选项失效")]
-        public bool EnableCustomeBooster { get => BoosterImplantTemplateManager.EnableCustomeBooster; set => BoosterImplantTemplateManager.EnableCustomeBooster = value; }
+        public bool EnableCustomBooster { get => BoosterImplantTemplateManager.EnableCustomBooster; set => BoosterImplantTemplateManager.EnableCustomBooster = value; }
 
         [FSDisplayName("通过现有强化剂生成自定义强化剂")]
-        public FButton CreateCustomeBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomeBoosterImplantsFromInventory);
+        public FButton CreateCustomBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomBoosterImplantsFromInventory);
 
         [FSDisplayName("通过设置文件重载自定义强化剂")]
-        public FButton LoadCustomeBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂设置", CustomeBoosterImplants.Load);
+        public FButton LoadCustomBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂设置", CustomBoosterImplants.Load);
 
         [FSDisplayName("应用自定义强化剂")]
-        public FButton ApplyCustomeBoosters { get; set; } = new("应用", "应用自定义强化剂", ApplyCustomeBoosterImplants);
+        public FButton ApplyCustomBoosters { get; set; } = new("应用", "应用自定义强化剂", ApplyCustomBoosterImplants);
 
         [JsonIgnore]
         [FSReadOnly]
         [FSDisplayName("编辑自定义强化剂")]
-        public Dictionary<BoosterImplantCategory, CustomeBoosterImplantEntryListEntry> CustomeBoosterImplantsEntry
+        public Dictionary<BoosterImplantCategory, CustomBoosterImplantEntryListEntry> CustomBoosterImplantsEntry
         {
             get
             {
-                Dictionary<BoosterImplantCategory, CustomeBoosterImplantEntryListEntry> result = new();
+                Dictionary<BoosterImplantCategory, CustomBoosterImplantEntryListEntry> result = new();
                 for (int i = 0; i < 3; i++)
                 {
                     var category = (BoosterImplantCategory)i;
-                    var entries = new List<CustomeBoosterImplantEntry>();
-                    for (int j = 0; j < CustomeBoosterImplants.Value[category].Count; j++)
+                    var entries = new List<CustomBoosterImplantEntry>();
+                    for (int j = 0; j < CustomBoosterImplants.Value[category].Count; j++)
                     {
-                        entries.Add(new(CustomeBoosterImplants.Value[category][j]));
+                        entries.Add(new(CustomBoosterImplants.Value[category][j]));
                     }
                     result[category] = new(entries);
                 }
@@ -71,21 +71,21 @@ public class CustomeBooster : Feature
     }
 
 
-    public class CustomeBoosterImplantEntryListEntry
+    public class CustomBoosterImplantEntryListEntry
     {
-        public CustomeBoosterImplantEntryListEntry(List<CustomeBoosterImplantEntry> entries)
+        public CustomBoosterImplantEntryListEntry(List<CustomBoosterImplantEntry> entries)
         {
             Entries = entries;
         }
 
         [FSInline]
         [FSDisplayName("强化剂列表")]
-        public List<CustomeBoosterImplantEntry> Entries { get; set; } = new();
+        public List<CustomBoosterImplantEntry> Entries { get; set; } = new();
     }
 
-    public class CustomeBoosterImplantEntry
+    public class CustomBoosterImplantEntry
     {
-        public CustomeBoosterImplantEntry(CustomeBoosterImplant implant)
+        public CustomBoosterImplantEntry(CustomBoosterImplant implant)
         {
             Implant = implant;
             Modifier = new(implant);
@@ -103,11 +103,11 @@ public class CustomeBooster : Feature
         public uint TemplateId { get => Implant.TemplateId; set { } }
 
         [FSDisplayName("效果列表")]
-        public List<CustomeBoosterImplantEffectEntry> Effect
+        public List<CustomBoosterImplantEffectEntry> Effect
         {
             get
             {
-                List<CustomeBoosterImplantEffectEntry> result = new();
+                List<CustomBoosterImplantEffectEntry> result = new();
                 for (int i = 0; i < Implant.Effects.Count; i++)
                 {
                     result.Add(new(Implant.Effects[i]));
@@ -120,11 +120,11 @@ public class CustomeBooster : Feature
         }
 
         [FSDisplayName("条件列表")]
-        public List<CustomeBoosterImplantConditionEntry> Conditions
+        public List<CustomBoosterImplantConditionEntry> Conditions
         {
             get
             {
-                List<CustomeBoosterImplantConditionEntry> conditions = new();
+                List<CustomBoosterImplantConditionEntry> conditions = new();
                 for (int i = 0; i < Implant.Conditions.Count; i++)
                 {
                     conditions.Add(new(i, Implant));
@@ -143,7 +143,7 @@ public class CustomeBooster : Feature
         public BoosterImplantModifier Modifier { get; set; }
 
         [FSIgnore]
-        private CustomeBoosterImplant Implant { get; set; }
+        private CustomBoosterImplant Implant { get; set; }
     }
 
     public enum ModifyType
@@ -162,7 +162,7 @@ public class CustomeBooster : Feature
 
     public class BoosterImplantModifier
     {
-        public BoosterImplantModifier(CustomeBoosterImplant implant)
+        public BoosterImplantModifier(CustomBoosterImplant implant)
         {
             Implant = implant;
             Modify = new FButton("应用", "应用修改", DoModify);
@@ -234,12 +234,12 @@ public class CustomeBooster : Feature
             }
         }
 
-        private CustomeBoosterImplant Implant { get; set; }
+        private CustomBoosterImplant Implant { get; set; }
     }
 
-    public class CustomeBoosterImplantEffectEntry
+    public class CustomBoosterImplantEffectEntry
     {
-        public CustomeBoosterImplantEffectEntry(Effect effect)
+        public CustomBoosterImplantEffectEntry(Effect effect)
         {
             Effect = effect;
         }
@@ -254,9 +254,9 @@ public class CustomeBooster : Feature
         private Effect Effect { get; set; }
     }
 
-    public class CustomeBoosterImplantConditionEntry
+    public class CustomBoosterImplantConditionEntry
     {
-        public CustomeBoosterImplantConditionEntry(int index, CustomeBoosterImplant implant)
+        public CustomBoosterImplantConditionEntry(int index, CustomBoosterImplant implant)
         {
             Index = index;
             Implant = implant;
@@ -270,7 +270,7 @@ public class CustomeBooster : Feature
         public uint Condition { get => Implant.Conditions[Index]; set => Implant.Conditions[Index] = value; }
 
         [FSIgnore]
-        private CustomeBoosterImplant Implant { get; set; }
+        private CustomBoosterImplant Implant { get; set; }
     }
 
 
@@ -281,9 +281,9 @@ public class CustomeBooster : Feature
         {
             __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
             {
-                if (Settings.EnableCustomeBooster)
+                if (Settings.EnableCustomBooster)
                 {
-                    ApplyCustomeBoosterImplants();
+                    ApplyCustomBoosterImplants();
                 }
             });
         }
@@ -294,7 +294,7 @@ public class CustomeBooster : Feature
     {
         public static void Prefix(ref uint[] boosterIds)
         {
-            if (Settings.EnableCustomeBooster)
+            if (Settings.EnableCustomBooster)
             {
                 boosterIds = null;
             }
@@ -306,7 +306,7 @@ public class CustomeBooster : Feature
     {
         private static bool Prefix()
         {
-            return !Settings.EnableCustomeBooster;
+            return !Settings.EnableCustomBooster;
         }
     }
 
@@ -315,7 +315,7 @@ public class CustomeBooster : Feature
     {
         private static bool Prefix(ref int __result)
         {
-            if (Settings.EnableCustomeBooster)
+            if (Settings.EnableCustomBooster)
             {
                 __result = 0;
                 return false;
