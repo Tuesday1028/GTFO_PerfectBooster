@@ -4,6 +4,7 @@ using Clonesoft.Json;
 using GameData;
 using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
@@ -27,6 +28,7 @@ public class PerfectBooster : Feature
     {
         [FSDisplayName("快速刷取")]
         public bool EnableBoosterFarmer { get; set; } = true;
+        [RequiresRestart]
         [FSDisplayName("完美强化剂")]
         public bool EnablePerfectBooster { get; set; } = true;
         [FSDisplayName("禁用消耗")]
@@ -42,7 +44,7 @@ public class PerfectBooster : Feature
         public FButton ApplyCustomPerfectBoosters { get; set; } = new("应用", "应用自定义强化剂", ApplyCustomPerfectBoosterImplants);
         [JsonIgnore]
         [FSReadOnly]
-        [FSDisplayName("编辑自定义完美强化剂")]
+        [FSDisplayName("编辑自定义强化剂")]
         public Dictionary<BoosterImplantCategory, CustomPerfectBoosterImplantEntryListEntry> CustomPerfectBoosterImplantsEntry
         {
             get
