@@ -1,0 +1,115 @@
+﻿using GameData;
+using TheArchive.Core.ModulesAPI;
+using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
+
+namespace Hikaria.PerfectBooster.Managers;
+
+public static class CustomPerfectBoosterImplantManager
+{
+    public static CustomSetting<Dictionary<BoosterImplantCategory, List<CustomPerfectBoosterImplant>>> CustomPerfectBoosterImplants { get; set; } = new("CustomPerfectBoosterImplants", new()
+    {
+        { BoosterImplantCategory.Muted, new() },
+        { BoosterImplantCategory.Bold, new() },
+        { BoosterImplantCategory.Aggressive, new() }
+    }, null, LoadingTime.AfterGameDataInited);
+
+    public static void CreateCustomPerfectBoosterImplantsFromInventory()
+    {
+        CustomPerfectBoosterImplants.Value = new()
+        {
+            { BoosterImplantCategory.Muted, new() },
+            { BoosterImplantCategory.Bold, new() },
+            { BoosterImplantCategory.Aggressive, new() }
+        };
+        foreach (var category in PersistentInventoryManager.Current.m_boosterImplantInventory.Categories)
+        {
+            foreach (var item in category.Inventory)
+            {
+                CustomPerfectBoosterImplants.Value[item.Implant.Category].Add(new(item.Implant));
+            }
+        }
+    }
+
+    public static void ApplyCustomPerfectBoosterImplants()
+    {
+        for (int category = 0; category < 3; category++)
+        {
+            for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory.Count; i++)
+            {
+                PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory[i].Prepared = false;
+            }
+        }
+
+        uint Id = 7225460U;
+        for (int i = 0; i < 3; i++)
+        {
+            var inventory = PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[i].Inventory;
+            inventory.Clear();
+            var category = (BoosterImplantCategory)i;
+            for (int j = 0; j < CustomPerfectBoosterImplants.Value[category].Count; j++)
+            {
+                var CustomPerfectBoosterImplant = CustomPerfectBoosterImplants.Value[category][j];
+                if (!CustomPerfectBoosterImplant.Enabled)
+                {
+                    continue;
+                }
+                if (BoosterImplantTemplateDataBlock.GetBlock(CustomPerfectBoosterImplant.TemplateId) == null)
+                {
+                    continue;
+                }
+                var template = BoosterImplantTemplates.FirstOrDefault(p => p.BoosterImplantID == CustomPerfectBoosterImplant.TemplateId);
+                if (template == null || template.BoosterImplantID == 0
+                    || CustomPerfectBoosterImplant.ConditionGroupIndex >= template.ConditionGroups.Count
+                    || CustomPerfectBoosterImplant.EffectGroupIndex >= template.EffectGroups.Count
+                    || (CustomPerfectBoosterImplant.ConditionGroupIndex == -1 && template.ConditionGroups[0].Any())
+                    || CustomPerfectBoosterImplant.EffectGroupIndex == -1)
+                {
+                    continue;
+                }
+                List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
+                foreach (var effect in template.EffectGroups[CustomPerfectBoosterImplant.EffectGroupIndex])
+                {
+                    effects.Add(new() { Id = effect.BoosterImplantEffect, Param = effect.EffectMaxValue });
+                }
+                var item = new BoosterImplantInventoryItem(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
+                {
+                    Conditions = CustomPerfectBoosterImplant.ConditionGroupIndex == -1 ? Array.Empty<uint>() : template.ConditionGroups[CustomPerfectBoosterImplant.ConditionGroupIndex].ToArray(),
+                    Effects = effects.ToArray(),
+                    Id = Id,
+                    TemplateId = CustomPerfectBoosterImplant.TemplateId,
+                    Flags = 1U,
+                });
+                inventory.Add(item);
+                item.Implant.InstanceId = Id;
+                item.Implant.Uses = (int)item.Implant.Template.DurationRange.y;
+                CustomPerfectBoosterImplant.Name = item.Implant.GetCompositPublicName(true);
+                Id++;
+            }
+        }
+    }
+
+    public class CustomPerfectBoosterImplant
+    {
+        public CustomPerfectBoosterImplant(BoosterImplant implant)
+        {
+            Name = implant.GetCompositPublicName(true);
+            TemplateId = implant.TemplateId;
+            Category = implant.Category;
+            if (TryGetBoosterImplantTemplate(implant, out _, out _, out _, out var effectGroupIndex, out var conditionGroupIndex))
+            {
+                ConditionGroupIndex = conditionGroupIndex;
+                EffectGroupIndex = effectGroupIndex;
+            }
+        }
+        public CustomPerfectBoosterImplant()
+        {
+        }
+
+        public string Name { get; set; } = string.Empty;
+        public BoosterImplantCategory Category { get; set; } = BoosterImplantCategory._COUNT;
+        public uint TemplateId { get; set; } = 0;
+        public int ConditionGroupIndex { get; set; } = -1;
+        public int EffectGroupIndex { get; set; } = -1;
+        public bool Enabled { get; set; } = false;
+    }
+}

@@ -6,7 +6,9 @@ using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Components;
 using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
+using static Hikaria.PerfectBooster.Managers.CustomPerfectBoosterImplantManager;
 
 namespace Hikaria.PerfectBooster.Features;
 
@@ -29,63 +31,109 @@ public class PerfectBooster : Feature
         public bool EnablePerfectBooster { get; set; } = true;
         [FSDisplayName("禁用消耗")]
         public bool DisableBoosterConsume { get; set; } = true;
-        [FSHeader("模板首选项")]
-        [FSDisplayName("启用模板首选项")]
-        public bool EnableBoosterTemplatePreference { get => BoosterImplantTemplateManager.EnableBoosterTemplatePreference; set => BoosterImplantTemplateManager.EnableBoosterTemplatePreference = value; }
-
+        [FSHeader("自定义强化剂")]
+        [FSDisplayName("启用自定义强化剂")]
+        public bool EnableCustomPerfectBooster { get => BoosterImplantTemplateManager.EnableCustomPerfectBooster; set => BoosterImplantTemplateManager.EnableCustomPerfectBooster = value; }
+        [FSDisplayName("通过现有强化剂生成自定义强化剂")]
+        public FButton CreateCustomPerfectBoosterFromInventory { get; set; } = new("生成", "生成自定义强化剂", CreateCustomPerfectBoosterImplantsFromInventory);
+        [FSDisplayName("通过设置文件重载自定义强化剂")]
+        public FButton LoadCustomPerfectBoosterFromSettings { get; set; } = new("重载", "重载自定义强化剂设置", CustomPerfectBoosterImplants.Load);
+        [FSDisplayName("应用自定义强化剂")]
+        public FButton ApplyCustomPerfectBoosters { get; set; } = new("应用", "应用自定义强化剂", ApplyCustomPerfectBoosterImplants);
         [JsonIgnore]
-        [FSDisplayName("模板首选项设置")]
-        public List<BoosterImplantTemplatePreference> BoosterTemplatePreferences { get => BoosterImplantTemplateManager.BoosterTemplatePreferences.Value.ToList(); set { } }
-
-       
+        [FSReadOnly]
+        [FSDisplayName("编辑自定义完美强化剂")]
+        public Dictionary<BoosterImplantCategory, CustomPerfectBoosterImplantEntryListEntry> CustomPerfectBoosterImplantsEntry
+        {
+            get
+            {
+                Dictionary<BoosterImplantCategory, CustomPerfectBoosterImplantEntryListEntry> result = new();
+                for (int i = 0; i < 3; i++)
+                {
+                    var category = (BoosterImplantCategory)i;
+                    var entries = new List<CustomPerfectBoosterImplantEntry>();
+                    for (int j = 0; j < CustomPerfectBoosterImplants.Value[category].Count; j++)
+                    {
+                        entries.Add(new(CustomPerfectBoosterImplants.Value[category][j]));
+                    }
+                    result[category] = new(entries);
+                }
+                return result;
+            }
+            set
+            {
+            }
+        }
     }
 
-    public class BoosterImplantTemplatePreference
+    public class CustomPerfectBoosterImplantEntryListEntry
     {
-        public BoosterImplantTemplatePreference(BoosterImplantTemplate template)
+        public CustomPerfectBoosterImplantEntryListEntry(List<CustomPerfectBoosterImplantEntry> entries)
         {
-            for (int i = 0; i < template.EffectGroups.Count; i++)
-            {
-                EffectsTemplates.Add(new(i, template.EffectGroups[i]));
-            }
-            for (int i = 0; i < template.ConditionGroups.Count; i++)
-            {
-                ConditionsTemplates.Add(new(i, template.ConditionGroups[i]));
-            }
-            TemplateName = template.TemplateDataBlock.PublicName.ToString();
-            TemplateId = template.BoosterImplantID;
-            TemplateCategory = template.ImplantCategory;
+            Entries = entries;
         }
 
-        public BoosterImplantTemplatePreference()
+        [FSInline]
+        [FSDisplayName("强化剂列表")]
+        public List<CustomPerfectBoosterImplantEntry> Entries { get; set; } = new();
+    }
+
+    public class CustomPerfectBoosterImplantEntry
+    {
+        public CustomPerfectBoosterImplantEntry(CustomPerfectBoosterImplant implant)
         {
+            Implant = implant;
+            TemplateId = implant.TemplateId;
+            var template = BoosterImplantTemplates.FirstOrDefault(p => p.BoosterImplantID == implant.TemplateId);
+            if (template != null && template.BoosterImplantID != 0)
+            {
+                for (int i = 0; i < template.EffectGroups.Count; i++)
+                {
+                    Templates.EffectsTemplates.Add(new(i, template.EffectGroups[i]));
+                }
+                for (int i = 0; i < template.ConditionGroups.Count; i++)
+                {
+                    Templates.ConditionsTemplates.Add(new(i, template.ConditionGroups[i]));
+                }
+                TemplateId = template.BoosterImplantID;
+            }
         }
 
         [FSSeparator]
         [FSReadOnly]
         [FSDisplayName("名称")]
-        public string TemplateName { get; set; } = string.Empty;
-
-        [FSReadOnly]
-        [FSDisplayName("ID")]
-        public uint TemplateId { get; set; } = 0;
-
+        public string Name { get => Implant.Name; set { } }
         [FSReadOnly]
         [FSDisplayName("类别")]
-        public BoosterImplantCategory TemplateCategory { get; set; } = BoosterImplantCategory._COUNT;
+        public BoosterImplantCategory Category { get => Implant.Category; set { } }
+        [FSReadOnly]
+        [FSDisplayName("ID")]
+        public uint TemplateId { get => Implant.TemplateId; set { } }
 
-        [FSDisplayName("首选效果组索引")]
-        public int EffectsGroupIndex { get; set; } = -1;
+        [FSDisplayName("效果组索引")]
+        public int EffectsGroupIndex { get => Implant.EffectGroupIndex; set => Implant.EffectGroupIndex = value; }
 
-        [FSDisplayName("首选条件组索引")]
-        public int ConditionsGroupIndex { get; set; } = -1;
+        [FSDisplayName("条件组索引")]
+        public int ConditionsGroupIndex { get => Implant.ConditionGroupIndex; set => Implant.ConditionGroupIndex = value; }
+
+        [FSDisplayName("状态")]
+        public bool Enabled { get => Implant.Enabled; set => Implant.Enabled = value; }
 
         [JsonIgnore]
+        [FSInline]
+        [FSDisplayName("可选模板")]
+        public CustomPerfectBoosterTemplateEntry Templates { get; set; } = new();
+
+        [FSIgnore]
+        private CustomPerfectBoosterImplant Implant { get; set; }
+    }
+
+    public class CustomPerfectBoosterTemplateEntry
+    {
         [FSReadOnly]
         [FSDisplayName("可选效果模板")]
         public List<BoosterImplantEffectGroupPreferenceEntry> EffectsTemplates { get; set; } = new();
 
-        [JsonIgnore]
         [FSReadOnly]
         [FSDisplayName("可选条件模板")]
         public List<BoosterImplantConditionGroupPreferenceEntry> ConditionsTemplates { get; set; } = new();
@@ -175,18 +223,32 @@ public class PerfectBooster : Feature
     {
         private static void Postfix()
         {
-            BoosterTemplatePreferences.Load();
+            CustomPerfectBoosterImplants.Load();
         }
     }
 
-    
+    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.Setup))]
+    private class PersistentInventoryManager__Setup__Patch
+    {
+        private static void Postfix(PersistentInventoryManager __instance)
+        {
+            __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
+            {
+                if (Settings.EnableCustomPerfectBooster)
+                {
+                    ApplyCustomPerfectBoosterImplants();
+                }
+            });
+        }
+    }
+
 
     [ArchivePatch(typeof(BoosterImplantManager), nameof(BoosterImplantManager.OnActiveBoosterImplantsChanged))]
     private class BoosterImplantManager__OnActiveBoosterImplantsChanged__Patch
     {
         private static void Prefix()
         {
-            if (!Settings.EnablePerfectBooster) return;
+            if (!Settings.EnablePerfectBooster || Settings.EnableCustomPerfectBooster) return;
 
             for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories.Count; i++)
             {
@@ -195,12 +257,9 @@ public class PerfectBooster : Feature
                 for (int j = 0; j < inventory.Count; j++)
                 {
                     var boosterImplant = inventory[j].Implant;
-                    if (TryGetBoosterImplantTemplate(boosterImplant, out BoosterImplantTemplate template, out var effectGroup, out var conditions))
+                    if (TryGetBoosterImplantTemplate(boosterImplant, out BoosterImplantTemplate template, out var effectGroup, out var conditions, out _, out _))
                     {
-                        if (TryGetBoosterImplantTemplatePreference(boosterImplant, template, out var preferedEffectGroup, out var preferedConditionGroup))
-                            ApplyPerfectBoosterFromTemplate(boosterImplant, preferedEffectGroup, preferedConditionGroup);
-                        else
-                            ApplyPerfectBoosterFromTemplate(boosterImplant, effectGroup, conditions);
+                        ApplyPerfectBoosterFromTemplate(boosterImplant, effectGroup, conditions);
                     }
                 }
             }
@@ -221,7 +280,7 @@ public class PerfectBooster : Feature
     {
         public static void Prefix(ref uint[] boosterIds)
         {
-            if (Settings.DisableBoosterConsume)
+            if (Settings.DisableBoosterConsume || Settings.EnablePerfectBooster)
             {
                 boosterIds = null;
             }
@@ -234,7 +293,7 @@ public class PerfectBooster : Feature
     {
         private static bool Prefix()
         {
-            return !Settings.DisableBoosterConsume;
+            return !(Settings.DisableBoosterConsume || Settings.EnableCustomPerfectBooster);
         }
     }
 
@@ -243,12 +302,24 @@ public class PerfectBooster : Feature
     {
         private static bool Prefix(ref int __result)
         {
-            if (Settings.EnableBoosterFarmer)
+            if (Settings.EnableBoosterFarmer && !Settings.EnableCustomPerfectBooster)
             {
                 __result = 1000;
                 return false;
             }
             return true;
         }
+    }
+
+    public override void Init()
+    {
+        Localization.RegisterExternType<BoosterImplantCategory>();
+        Localization.RegisterExternType<AgentModifier>();
+        Localization.RegisterExternType<BoosterCondition>();
+    }
+
+    public override void OnGameDataInitialized()
+    {
+        LoadTemplateData();
     }
 }

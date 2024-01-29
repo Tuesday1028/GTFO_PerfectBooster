@@ -1,11 +1,12 @@
 ﻿using GameData;
+using System;
 using TheArchive.Core.ModulesAPI;
 
 namespace Hikaria.PerfectBooster.Managers
 {
     public static class CustomBoosterImplantManager
     {
-        public static ModuleSetting<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
+        public static CustomSetting<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
         new()
         {
             { BoosterImplantCategory.Muted, new() },
@@ -32,6 +33,14 @@ namespace Hikaria.PerfectBooster.Managers
 
         public static void ApplyCustomBoosterImplants()
         {
+            for (int category = 0; category < 3; category++)
+            {
+                for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory.Count; i++)
+                {
+                    PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory[i].Prepared = false;
+                }
+            }
+
             uint Id = 3223718U;
             for (int i = 0; i < 3; i++)
             {
@@ -49,11 +58,11 @@ namespace Hikaria.PerfectBooster.Managers
                     {
                         continue;
                     }
-                    List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
                     if (CustomBoosterImplant.Effects.Any(p => p.Id == 0) || CustomBoosterImplant.Conditions.Any(p => p == 0))
                     {
                         continue;
                     }
+                    List<DropServer.BoosterImplants.BoosterImplantEffect> effects = new();
                     foreach (var effect in CustomBoosterImplant.Effects)
                     {
                         effects.Add(new() { Id = effect.Id, Param = effect.Value });
@@ -89,7 +98,6 @@ namespace Hikaria.PerfectBooster.Managers
                     Effects.Add(new(effect));
                 }
             }
-
             public CustomBoosterImplant()
             {
             }
@@ -99,7 +107,6 @@ namespace Hikaria.PerfectBooster.Managers
             public uint TemplateId { get; set; } = 0;
             public List<uint> Conditions { get; set; } = new();
             public List<Effect> Effects { get; set; } = new();
-
             public bool Enabled { get; set; } = false;
 
             public class Effect
@@ -109,13 +116,11 @@ namespace Hikaria.PerfectBooster.Managers
                     Id = effect.Id;
                     Value = effect.Value;
                 }
-
                 public Effect()
                 {
                 }
 
                 public uint Id { get; set; } = 0;
-
                 public float Value { get; set; } = 1f;
             }
         }

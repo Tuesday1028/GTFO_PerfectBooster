@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.Localization;
 using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager;
 using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager.CustomBoosterImplant;
 
@@ -19,6 +20,8 @@ public class CustomBooster : Feature
 
     [FeatureConfig]
     public static CustomBoosterSetting Settings { get; set; }
+
+    public override bool RequiresRestart => true;
 
     public class CustomBoosterSetting
     {
@@ -146,6 +149,7 @@ public class CustomBooster : Feature
         private CustomBoosterImplant Implant { get; set; }
     }
 
+    [Localized]
     public enum ModifyType
     {
         Add,
@@ -153,12 +157,12 @@ public class CustomBooster : Feature
         Modify
     }
 
+    [Localized]
     public enum ModifyTarget
     {
         Effect,
         Condition
     }
-
 
     public class BoosterImplantModifier
     {
@@ -322,5 +326,12 @@ public class CustomBooster : Feature
             }
             return true;
         }
+    }
+
+    public override void Init()
+    {
+        Localization.RegisterExternType<BoosterImplantCategory>();
+        Localization.RegisterExternType<AgentModifier>();
+        Localization.RegisterExternType<BoosterCondition>();
     }
 }

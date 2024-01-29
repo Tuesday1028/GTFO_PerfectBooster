@@ -1,6 +1,8 @@
-﻿using GameData;
+﻿using BoosterImplants;
+using Clonesoft.Json;
+using GameData;
+using Hikaria.PerfectBooster.Features;
 using TheArchive.Core.ModulesAPI;
-using static Hikaria.PerfectBooster.Features.PerfectBooster;
 
 namespace Hikaria.PerfectBooster.Managers;
 
@@ -9,10 +11,67 @@ public static class BoosterImplantTemplateManager
     public static float BoosterPositiveEffectMultiplier { get; set; } = 1f;
     public static bool DisableBoosterConditions { get; set; } = false;
     public static bool DisableBoosterNegativeEffects { get; set; } = false;
-    public static bool EnableBoosterTemplatePreference { get; set; } = false;
+    public static bool EnableCustomPerfectBooster { get; set; } = false;
     public static bool EnableCustomBooster { get; set; } = false;
 
-    private static void LoadTemplateData()
+    public static CustomSetting<Dictionary<BoosterImplantCategory, List<bBoosterImplantTemplate>>> BoosterImplantTemplatesLookup { get; set; } = new("BoosterImplantTemplatesLookup", new()
+    {
+        { BoosterImplantCategory.Muted, new() },
+        { BoosterImplantCategory.Bold, new() },
+        { BoosterImplantCategory.Aggressive, new() }
+    }, null, LoadingTime.None, false);
+
+    public class bBoosterImplantTemplate
+    {
+        public bBoosterImplantTemplate(BoosterImplantTemplate template)
+        {
+            BoosterImplantID = template.BoosterImplantID;
+            ImplantCategory = template.ImplantCategory;
+            int index = 0;
+            foreach (var group in template.EffectGroups)
+            {
+                var list = new List<bBoosterImplantEffectTemplate>();
+                foreach (var effectTemplate in group)
+                {
+                    list.Add(new(effectTemplate));
+                }
+                EffectGroups.Add(index++, list);
+            }
+            index = 0;
+            foreach (var group in template.ConditionGroups)
+            {
+                var list = new List<BoosterCondition>();
+                foreach (var condition in group)
+                {
+                    list.Add(BoosterImplantConditionDataBlock.GetBlock(condition).Condition);
+                }
+                ConditionGroups.Add(index++, list);
+            }
+        }
+
+        public uint BoosterImplantID { get; set; }
+        public BoosterImplantCategory ImplantCategory { get; set; }
+        public Dictionary<int, List<bBoosterImplantEffectTemplate>> EffectGroups { get; set; } = new();
+        public Dictionary<int, List<BoosterCondition>> ConditionGroups { get; set; } = new();
+    }
+
+    public class bBoosterImplantEffectTemplate
+    {
+        public bBoosterImplantEffectTemplate(BoosterImplantEffectTemplate effectTemplate)
+        {
+            BoosterImplantEffect = effectTemplate.BoosterImplantEffect;
+            AgentModifier = BoosterImplantEffectDataBlock.GetBlock(BoosterImplantEffect).Effect;
+            EffectMaxValue = effectTemplate.EffectMaxValue;
+            EffectMinValue = effectTemplate.EffectMinValue;
+        }
+
+        public uint BoosterImplantEffect { get; set; }
+        public AgentModifier AgentModifier { get; set; }
+        public float EffectMaxValue { get; set; }
+        public float EffectMinValue { get; set; }
+    }
+
+    public static void LoadTemplateData()
     {
         BoosterImplantTemplates.Clear();
         var templates = BoosterImplantTemplateDataBlock.GetAllBlocksForEditor();
@@ -20,6 +79,18 @@ public static class BoosterImplantTemplateManager
         {
             BoosterImplantTemplates.Add(new(templates[i]));
         }
+
+        BoosterImplantTemplatesLookup.Value = new()
+        {
+            { BoosterImplantCategory.Muted, new() },
+            { BoosterImplantCategory.Bold, new() },
+            { BoosterImplantCategory.Aggressive, new() }
+        };
+        for (int i = 0; i < BoosterImplantTemplates.Count; i++)
+        {
+            BoosterImplantTemplatesLookup.Value[BoosterImplantTemplates[i].ImplantCategory].Add(new (BoosterImplantTemplates[i]));
+        }
+        BoosterImplantTemplatesLookup.Save();
     }
 
     public static void ApplyPerfectBoosterFromTemplate(BoosterImplant boosterImplant, List<BoosterImplantEffectTemplate> effectGroup, List<uint> conditions)
@@ -37,40 +108,12 @@ public static class BoosterImplantTemplateManager
         boosterImplant.Conditions = DisableBoosterConditions ? Array.Empty<uint>() : conditions.ToArray();
     }
 
-    public static bool TryGetBoosterImplantTemplatePreference(BoosterImplant boosterImplant, BoosterImplantTemplate template, out List<BoosterImplantEffectTemplate> effectGroup, out List<uint> conditions)
-    {
-        effectGroup = new();
-        conditions = new();
-        if (!EnableBoosterTemplatePreference)
-        {
-            return false;
-        }
-        var preference = BoosterTemplatePreferences.Value.FirstOrDefault(p => p.TemplateId == boosterImplant.TemplateId && p.TemplateCategory == boosterImplant.Category);
-        if (preference == null || preference.TemplateId == 0)
-        {
-            return false;
-        }
-        bool findPreferedEffectGroup = false;
-        bool findPreferedConditionsGroup = false;
-        int effectGroupIndex = preference.EffectsGroupIndex;
-        int conditionGroupIndex = preference.ConditionsGroupIndex;
-        if (effectGroupIndex >= 0 && effectGroupIndex <= template.EffectGroups.Count)
-        {
-            effectGroup = template.EffectGroups[effectGroupIndex];
-            findPreferedEffectGroup = true;
-        }
-        if (conditionGroupIndex >= 0 && conditionGroupIndex <= template.ConditionGroups.Count)
-        {
-            conditions = template.ConditionGroups[conditionGroupIndex];
-            findPreferedConditionsGroup = true;
-        }
-        return findPreferedEffectGroup && findPreferedConditionsGroup;
-    }
-
-    public static bool TryGetBoosterImplantTemplate(BoosterImplant boosterImplant, out BoosterImplantTemplate template, out List<BoosterImplantEffectTemplate> effectGroup, out List<uint> conditionGroup)
+    public static bool TryGetBoosterImplantTemplate(BoosterImplant boosterImplant, out BoosterImplantTemplate template, out List<BoosterImplantEffectTemplate> effectGroup, out List<uint> conditionGroup, out int effectGroupIndex, out int conditionGroupIndex)
     {
         effectGroup = new();
         conditionGroup = new();
+        effectGroupIndex = -1;
+        conditionGroupIndex = -1;
         uint persistenID = boosterImplant.TemplateId;
         template = BoosterImplantTemplates.FirstOrDefault(p => p.BoosterImplantID == persistenID && p.ImplantCategory == boosterImplant.Category);
 
@@ -98,6 +141,7 @@ public static class BoosterImplantTemplateManager
                 {
                     ConditionMatch = true;
                     conditionGroup = conditionGroups[i];
+                    conditionGroupIndex = i;
                     break;
                 }
             }
@@ -125,6 +169,7 @@ public static class BoosterImplantTemplateManager
                 {
                     EffectMatch = true;
                     effectGroup = effectGroups[i];
+                    effectGroupIndex = i;
                     break;
                 }
             }
@@ -138,39 +183,6 @@ public static class BoosterImplantTemplateManager
     }
 
     public static List<BoosterImplantTemplate> BoosterImplantTemplates { get; } = new();
-
-    public static ModuleSetting<List<BoosterImplantTemplatePreference>> BoosterTemplatePreferences { get; set; } = new("BoosterTemplatePreferences", new(), () =>
-    {
-        if (!BoosterTemplatePreferences.Value.Any())
-        {
-            List<BoosterImplantTemplatePreference> data = new();
-            foreach (var template in BoosterImplantTemplates)
-            {
-                data.Add(new(template));
-            }
-            BoosterTemplatePreferences.Value = data;
-        }
-
-        LoadTemplateData();
-
-        foreach (var template in BoosterImplantTemplates)
-        {
-            if (!BoosterTemplatePreferences.Value.Any(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory))
-            {
-                BoosterTemplatePreferences.Value.Add(new(template));
-            }
-            else
-            {
-                var pref = BoosterTemplatePreferences.Value.FirstOrDefault(p => p.TemplateId == template.BoosterImplantID && p.TemplateCategory == template.ImplantCategory);
-                BoosterTemplatePreferences.Value.Remove(pref);
-                BoosterTemplatePreferences.Value.Add(new(template)
-                {
-                    EffectsGroupIndex = pref.EffectsGroupIndex,
-                    ConditionsGroupIndex = pref.ConditionsGroupIndex
-                });
-            }
-        }
-    }, LoadingTime.AfterGameDataInited);
 
     public class BoosterImplantEffectTemplate
     {
@@ -272,12 +284,16 @@ public static class BoosterImplantTemplateManager
 
         public uint BoosterImplantID { get; set; }
         public BoosterImplantCategory ImplantCategory { get; set; }
+        [JsonIgnore]
         public List<BoosterImplantEffectTemplate> Effects { get; set; } = new();
+        [JsonIgnore]
         public List<List<BoosterImplantEffectTemplate>> RandomEffects { get; set; } = new();
+        [JsonIgnore]
         public List<uint> Conditions { get; set; } = new();
+        [JsonIgnore]
         public List<uint> RandomConditions { get; set; } = new();
 
-
+        [JsonIgnore]
         public BoosterImplantTemplateDataBlock TemplateDataBlock { get; private set; } = null;
 
         public List<List<BoosterImplantEffectTemplate>> EffectGroups { get; set; } = new();
