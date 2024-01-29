@@ -106,7 +106,7 @@ public class CustomBooster : Feature
         public uint TemplateId { get => Implant.TemplateId; set { } }
 
         [FSDisplayName("效果列表")]
-        public List<CustomBoosterImplantEffectEntry> Effect
+        public List<CustomBoosterImplantEffectEntry> Effects
         {
             get
             {
