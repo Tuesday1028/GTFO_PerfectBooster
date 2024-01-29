@@ -108,7 +108,7 @@ public static class CustomPerfectBoosterImplantManager
         public string Name { get; set; } = string.Empty;
         public BoosterImplantCategory Category { get; set; } = BoosterImplantCategory._COUNT;
         public uint TemplateId { get; set; } = 0;
-        public int EffectGroupIndex { get; set; } = 0;
+        public int EffectGroupIndex { get; set; } = -1;
         public int ConditionGroupIndex { get; set; } = 0;
         public bool Enabled { get; set; } = false;
     }
