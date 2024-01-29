@@ -1,7 +1,6 @@
 ﻿using BoosterImplants;
 using Clonesoft.Json;
 using GameData;
-using Hikaria.PerfectBooster.Features;
 using TheArchive.Core.ModulesAPI;
 
 namespace Hikaria.PerfectBooster.Managers;
@@ -150,6 +149,7 @@ public static class BoosterImplantTemplateManager
         {
             return false;
         }
+        conditionGroupIndex = 0;
 
         int effectCount = boosterImplant.Effects.Count;
         bool EffectMatch = false;

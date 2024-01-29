@@ -1,5 +1,4 @@
 ﻿using GameData;
-using System;
 using TheArchive.Core.ModulesAPI;
 
 namespace Hikaria.PerfectBooster.Managers

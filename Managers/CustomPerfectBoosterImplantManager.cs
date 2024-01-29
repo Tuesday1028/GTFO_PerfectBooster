@@ -61,7 +61,7 @@ public static class CustomPerfectBoosterImplantManager
                 if (template == null || template.BoosterImplantID == 0
                     || CustomPerfectBoosterImplant.ConditionGroupIndex >= template.ConditionGroups.Count
                     || CustomPerfectBoosterImplant.EffectGroupIndex >= template.EffectGroups.Count
-                    || (CustomPerfectBoosterImplant.ConditionGroupIndex == -1 && template.ConditionGroups[0].Any())
+                    || (CustomPerfectBoosterImplant.ConditionGroupIndex == -1)
                     || CustomPerfectBoosterImplant.EffectGroupIndex == -1)
                 {
                     continue;
@@ -73,7 +73,7 @@ public static class CustomPerfectBoosterImplantManager
                 }
                 var item = new BoosterImplantInventoryItem(new DropServer.BoosterImplants.BoosterImplantInventoryItem()
                 {
-                    Conditions = CustomPerfectBoosterImplant.ConditionGroupIndex == -1 ? Array.Empty<uint>() : template.ConditionGroups[CustomPerfectBoosterImplant.ConditionGroupIndex].ToArray(),
+                    Conditions = template.ConditionGroups[CustomPerfectBoosterImplant.ConditionGroupIndex].ToArray(),
                     Effects = effects.ToArray(),
                     Id = Id,
                     TemplateId = CustomPerfectBoosterImplant.TemplateId,
@@ -108,8 +108,8 @@ public static class CustomPerfectBoosterImplantManager
         public string Name { get; set; } = string.Empty;
         public BoosterImplantCategory Category { get; set; } = BoosterImplantCategory._COUNT;
         public uint TemplateId { get; set; } = 0;
-        public int ConditionGroupIndex { get; set; } = -1;
-        public int EffectGroupIndex { get; set; } = -1;
+        public int EffectGroupIndex { get; set; } = 0;
+        public int ConditionGroupIndex { get; set; } = 0;
         public bool Enabled { get; set; } = false;
     }
 }
