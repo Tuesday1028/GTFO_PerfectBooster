@@ -39,10 +39,10 @@ public static class BoosterImplantTemplateManager
             index = 0;
             foreach (var group in template.ConditionGroups)
             {
-                var list = new List<BoosterCondition>();
+                var list = new List<bBoosterImplantConditionTemplate>();
                 foreach (var condition in group)
                 {
-                    list.Add(BoosterImplantConditionDataBlock.GetBlock(condition).Condition);
+                    list.Add(new(BoosterImplantConditionDataBlock.GetBlock(condition)));
                 }
                 ConditionGroups.Add(index++, list);
             }
@@ -51,23 +51,35 @@ public static class BoosterImplantTemplateManager
         public uint BoosterImplantID { get; set; }
         public BoosterImplantCategory ImplantCategory { get; set; }
         public Dictionary<int, List<bBoosterImplantEffectTemplate>> EffectGroups { get; set; } = new();
-        public Dictionary<int, List<BoosterCondition>> ConditionGroups { get; set; } = new();
+        public Dictionary<int, List<bBoosterImplantConditionTemplate>> ConditionGroups { get; set; } = new();
     }
 
     public class bBoosterImplantEffectTemplate
     {
         public bBoosterImplantEffectTemplate(BoosterImplantEffectTemplate effectTemplate)
         {
-            BoosterImplantEffect = effectTemplate.BoosterImplantEffect;
-            AgentModifier = BoosterImplantEffectDataBlock.GetBlock(BoosterImplantEffect).Effect;
-            EffectMaxValue = effectTemplate.EffectMaxValue;
-            EffectMinValue = effectTemplate.EffectMinValue;
+            ID = effectTemplate.BoosterImplantEffect;
+            Effect = BoosterImplantEffectDataBlock.GetBlock(ID).Effect;
+            MaxValue = effectTemplate.EffectMaxValue;
+            MinValue = effectTemplate.EffectMinValue;
         }
 
-        public uint BoosterImplantEffect { get; set; }
-        public AgentModifier AgentModifier { get; set; }
-        public float EffectMaxValue { get; set; }
-        public float EffectMinValue { get; set; }
+        public uint ID { get; set; }
+        public AgentModifier Effect { get; set; }
+        public float MaxValue { get; set; }
+        public float MinValue { get; set; }
+    }
+
+    public class bBoosterImplantConditionTemplate
+    {
+        public bBoosterImplantConditionTemplate(BoosterImplantConditionDataBlock block)
+        {
+            ID = block.persistentID;
+            Condition = block.Condition;
+        }
+
+        public uint ID { get; set; }
+        public BoosterCondition Condition { get; set; }
     }
 
     public static void LoadTemplateData()

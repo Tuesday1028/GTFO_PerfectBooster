@@ -1,5 +1,6 @@
 ﻿using BoosterImplants;
 using Clonesoft.Json;
+using GameData;
 using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -22,6 +23,8 @@ public class CustomBooster : Feature
     public static CustomBoosterSetting Settings { get; set; }
 
     public override bool RequiresRestart => true;
+
+    public override Type[] LocalizationExternalTypes => new Type[] { typeof(BoosterImplantCategory), typeof(AgentModifier), typeof(BoosterCondition) };
 
     public class CustomBoosterSetting
     {
@@ -326,12 +329,5 @@ public class CustomBooster : Feature
             }
             return true;
         }
-    }
-
-    public override void Init()
-    {
-        Localization.RegisterExternType<BoosterImplantCategory>();
-        Localization.RegisterExternType<AgentModifier>();
-        Localization.RegisterExternType<BoosterCondition>();
     }
 }

@@ -24,6 +24,8 @@ public class PerfectBooster : Feature
 
     public override bool RequiresRestart => true;
 
+    public override Type[] LocalizationExternalTypes => new Type[] { typeof(BoosterImplantCategory), typeof(AgentModifier), typeof(BoosterCondition) };
+
     public class PerfectBoosterSetting
     {
         [FSDisplayName("快速刷取")]
@@ -311,13 +313,6 @@ public class PerfectBooster : Feature
             }
             return true;
         }
-    }
-
-    public override void Init()
-    {
-        Localization.RegisterExternType<BoosterImplantCategory>();
-        Localization.RegisterExternType<AgentModifier>();
-        Localization.RegisterExternType<BoosterCondition>();
     }
 
     public override void OnGameDataInitialized()
