@@ -176,7 +176,6 @@ public class PerfectBooster : Feature
                 Effect = block.Effect;
             }
 
-            [FSInline]
             [FSReadOnly]
             [FSDisplayName("效果")]
             public AgentModifier Effect { get; set; }
@@ -215,7 +214,6 @@ public class PerfectBooster : Feature
                 Condition = block.Condition;
             }
 
-            [FSInline]
             [FSReadOnly]
             [FSDisplayName("条件")]
             public BoosterCondition Condition { get; set; }
