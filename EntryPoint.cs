@@ -6,6 +6,7 @@ using TheArchive.Core.Localization;
 
 namespace Hikaria.PerfectBooster;
 
+[BepInDependency(ArchiveMod.GUID, BepInDependency.DependencyFlags.HardDependency)]
 [BepInPlugin(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]
 public class EntryPoint : BasePlugin, IArchiveModule
 {
