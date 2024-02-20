@@ -32,13 +32,14 @@ namespace Hikaria.PerfectBooster.Managers
 
         public static void ApplyCustomBoosterImplants()
         {
+            /*
             for (int category = 0; category < 3; category++)
             {
                 for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory.Count; i++)
                 {
                     PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory[i].Prepared = false;
                 }
-            }
+            }*/
 
             uint Id = 3223718U;
             for (int i = 0; i < 3; i++)

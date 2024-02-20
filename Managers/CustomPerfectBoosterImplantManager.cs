@@ -32,13 +32,14 @@ public static class CustomPerfectBoosterImplantManager
 
     public static void ApplyCustomPerfectBoosterImplants()
     {
+        /*
         for (int category = 0; category < 3; category++)
         {
             for (int i = 0; i < PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory.Count; i++)
             {
                 PersistentInventoryManager.Current.m_boosterImplantInventory.Categories[category].Inventory[i].Prepared = false;
             }
-        }
+        }*/
 
         uint Id = 7225460U;
         for (int i = 0; i < 3; i++)
