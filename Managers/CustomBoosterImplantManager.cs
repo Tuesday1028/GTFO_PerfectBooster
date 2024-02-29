@@ -88,6 +88,7 @@ namespace Hikaria.PerfectBooster.Managers
                 {
                     Effects.Add(new(effect));
                 }
+                Enabled = true;
             }
             public CustomBoosterImplant()
             {

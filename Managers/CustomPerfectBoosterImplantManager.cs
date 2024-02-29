@@ -92,6 +92,7 @@ public static class CustomPerfectBoosterImplantManager
                 ConditionGroupIndex = conditionGroupIndex;
                 EffectGroupIndex = effectGroupIndex;
             }
+            Enabled = true;
         }
         public CustomPerfectBoosterImplant()
         {
