@@ -114,6 +114,9 @@ public class PerfectBooster : Feature
         [FSDisplayName("ID")]
         public uint TemplateId { get => Implant.TemplateId; set { } }
 
+        [FSDisplayName("模版索引")]
+        public int TemplateIndex { get => Implant.TemplateIndex; set { } }
+
         [FSDisplayName("效果组索引")]
         public int EffectsGroupIndex { get => Implant.EffectGroupIndex; set => Implant.EffectGroupIndex = value; }
 

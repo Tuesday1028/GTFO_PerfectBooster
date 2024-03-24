@@ -49,12 +49,17 @@ public static class CustomPerfectBoosterImplantManager
                 {
                     continue;
                 }
-                var template = BoosterImplantTemplates.FirstOrDefault(p => p.BoosterImplantID == CustomPerfectBoosterImplant.TemplateId);
+                var templates = BoosterImplantTemplates.FindAll(p => p.BoosterImplantID == CustomPerfectBoosterImplant.TemplateId);
+                if (!templates.Any() || CustomPerfectBoosterImplant.TemplateIndex <= -1 || CustomPerfectBoosterImplant.TemplateIndex >= templates.Count)
+                {
+                    continue;
+                }
+                var template = templates[CustomPerfectBoosterImplant.TemplateIndex];
                 if (template == null || template.BoosterImplantID == 0
                     || CustomPerfectBoosterImplant.ConditionGroupIndex >= template.ConditionGroups.Count
                     || CustomPerfectBoosterImplant.EffectGroupIndex >= template.EffectGroups.Count
-                    || (CustomPerfectBoosterImplant.ConditionGroupIndex == -1)
-                    || CustomPerfectBoosterImplant.EffectGroupIndex == -1)
+                    || (CustomPerfectBoosterImplant.ConditionGroupIndex <= -1)
+                    || CustomPerfectBoosterImplant.EffectGroupIndex <= -1)
                 {
                     continue;
                 }
@@ -101,8 +106,9 @@ public static class CustomPerfectBoosterImplantManager
         public string Name { get; set; } = string.Empty;
         public BoosterImplantCategory Category { get; set; } = BoosterImplantCategory._COUNT;
         public uint TemplateId { get; set; } = 0;
-        public int EffectGroupIndex { get; set; } = -1;
+        public int TemplateIndex { get; set; } = 0;
+        public int EffectGroupIndex { get; set; } = 0;
         public int ConditionGroupIndex { get; set; } = 0;
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; }
     }
 }

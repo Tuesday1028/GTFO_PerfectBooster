@@ -29,6 +29,7 @@ public static class BoosterImplantTemplateManager
         {
             BoosterImplantID = template.BoosterImplantID;
             ImplantCategory = template.ImplantCategory;
+            TemplateIndex = BoosterImplantTemplatesLookup.Value[template.ImplantCategory].Count(p => p.BoosterImplantID == template.BoosterImplantID);
             int index = 0;
             foreach (var group in template.EffectGroups)
             {
@@ -52,6 +53,7 @@ public static class BoosterImplantTemplateManager
         }
 
         public uint BoosterImplantID { get; set; }
+        public int TemplateIndex { get; set; }
         public BoosterImplantCategory ImplantCategory { get; set; }
         public Dictionary<int, List<bBoosterImplantEffectTemplate>> EffectGroups { get; set; } = new();
         public Dictionary<int, List<bBoosterImplantConditionTemplate>> ConditionGroups { get; set; } = new();
