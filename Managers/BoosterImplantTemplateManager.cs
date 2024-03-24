@@ -89,10 +89,11 @@ public static class BoosterImplantTemplateManager
     {
         OldBoosterImplantTemplateDataBlocks.Clear();
         OldBoosterImplantTemplateDataBlocks.AddRange(JsonConvert.DeserializeObject<List<BoosterImplantTemplateDataBlock>>(R5BoosterTemplatesJson, new JsonConverter[]
-        { new LocalizedTextJsonConverter(),
-                    new ListOfTConverter<uint>(),
-                    new ListOfTConverter<BoosterImplantEffectInstance>(),
-                    new ListOfListOfTConverter<BoosterImplantEffectInstance>()
+        {
+            new LocalizedTextJsonConverter(),
+            new ListOfTConverter<uint>(),
+            new ListOfTConverter<BoosterImplantEffectInstance>(),
+            new ListOfListOfTConverter<BoosterImplantEffectInstance>()
         }));
         BoosterImplantTemplates.Clear();
         var templates = BoosterImplantTemplateDataBlock.GetAllBlocksForEditor();
@@ -200,6 +201,7 @@ public static class BoosterImplantTemplateManager
                         break;
                     }
                 }
+                if (EffectMatch) break;
             }
             if (!EffectMatch)
             {
