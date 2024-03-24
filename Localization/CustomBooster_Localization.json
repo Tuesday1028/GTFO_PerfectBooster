@@ -280,7 +280,7 @@
       },
       "Hikaria.PerfectBooster.Features.CustomBooster+CustomBoosterImplantEntry.Enabled": {
         "FSDisplayName": {
-          "English": "State",
+          "English": "status",
           "Chinese": "状态",
           "French": null,
           "Italian": null,
