@@ -88,13 +88,38 @@ public class PerfectBooster : Feature
         {
             Implant = implant;
             TemplateId = implant.TemplateId;
-            var template = BoosterImplantTemplates.FirstOrDefault(p => p.BoosterImplantID == implant.TemplateId);
+            var templates = BoosterImplantTemplates.FindAll(p => p.BoosterImplantID == implant.TemplateId);
+            var template = templates[implant.TemplateIndex];
             if (template != null && template.BoosterImplantID != 0)
             {
+                Templates.EffectsTemplates.Clear();
                 for (int i = 0; i < template.EffectGroups.Count; i++)
                 {
                     Templates.EffectsTemplates.Add(new(i, template.EffectGroups[i]));
                 }
+                Templates.ConditionsTemplates.Clear();
+                for (int i = 0; i < template.ConditionGroups.Count; i++)
+                {
+                    Templates.ConditionsTemplates.Add(new(i, template.ConditionGroups[i]));
+                }
+                TemplateId = template.BoosterImplantID;
+            }
+        }
+
+        private void UpdateTemplate()
+        {
+            var templates = BoosterImplantTemplates.FindAll(p => p.BoosterImplantID == TemplateId);
+            if (TemplateIndex <= -1 || TemplateIndex >= templates.Count)
+                return;
+            var template = templates[TemplateIndex];
+            if (template != null && template.BoosterImplantID != 0)
+            {
+                Templates.EffectsTemplates.Clear();
+                for (int i = 0; i < template.EffectGroups.Count; i++)
+                {
+                    Templates.EffectsTemplates.Add(new(i, template.EffectGroups[i]));
+                }
+                Templates.ConditionsTemplates.Clear();
                 for (int i = 0; i < template.ConditionGroups.Count; i++)
                 {
                     Templates.ConditionsTemplates.Add(new(i, template.ConditionGroups[i]));
@@ -115,7 +140,7 @@ public class PerfectBooster : Feature
         public uint TemplateId { get => Implant.TemplateId; set { } }
 
         [FSDisplayName("模版索引")]
-        public int TemplateIndex { get => Implant.TemplateIndex; set { } }
+        public int TemplateIndex { get => Implant.TemplateIndex; set { Implant.TemplateIndex = value; UpdateTemplate(); } }
 
         [FSDisplayName("效果组索引")]
         public int EffectsGroupIndex { get => Implant.EffectGroupIndex; set => Implant.EffectGroupIndex = value; }
