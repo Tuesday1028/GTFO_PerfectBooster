@@ -205,10 +205,7 @@ public static class BoosterImplantTemplateManager
                 }
                 if (EffectMatch) break;
             }
-            if (!EffectMatch)
-            {
-                continue;
-            }
+            if (EffectMatch) return true;
         }
         return false;
     }

@@ -1,6 +1,5 @@
 ﻿using BoosterImplants;
 using Clonesoft.Json;
-using GameData;
 using Hikaria.PerfectBooster.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
