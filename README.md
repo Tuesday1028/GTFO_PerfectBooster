@@ -1,8 +1,11 @@
-﻿### 常规功能
+﻿### 说明
+本插件基于 TheArchive，目前使用的是非官方版本，官方版本暂时因不支持多语言和一些新特性不支持本插件
+
+### 常规功能
  - 刷取强化剂
  - 强化剂不消耗
  - 完美强化剂
- - 强化剂模板首选项
+ - 基于模板的自定义强化剂
 
 ### 隐藏功能
  - 无条件
@@ -11,6 +14,4 @@
  - 自定义强化剂
 
 ### 插件设置
-Settings-->Mod Settings-->QoL-->Perfect Booster
-
-![设置展示](https://raw.githubusercontent.com/Tuesday1028/GTFO_PerfectBooster/master/images/settings.png)
+Settings-->MOD Settings-->Perfect Booster
