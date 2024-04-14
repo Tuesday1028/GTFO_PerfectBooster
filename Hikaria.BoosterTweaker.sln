@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikaria.PerfectBooster", "Hikaria.PerfectBooster.csproj", "{862BC865-F4C8-4CC1-B27E-BF9FCD98A3A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikaria.BoosterTweaker", "Hikaria.BoosterTweaker.csproj", "{862BC865-F4C8-4CC1-B27E-BF9FCD98A3A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,8 +1,8 @@
 ﻿using GameData;
 using TheArchive.Core.ModulesAPI;
-using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
+using static Hikaria.BoosterTweaker.Managers.BoosterImplantTemplateManager;
 
-namespace Hikaria.PerfectBooster.Managers;
+namespace Hikaria.BoosterTweaker.Managers;
 
 public static class CustomPerfectBoosterImplantManager
 {

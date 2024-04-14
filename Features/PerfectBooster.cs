@@ -1,17 +1,18 @@
 ﻿using BoosterImplants;
 using CellMenu;
 using Clonesoft.Json;
+using DropServer.BoosterImplants;
 using GameData;
-using Hikaria.PerfectBooster.Managers;
+using Hikaria.BoosterTweaker.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
-using static Hikaria.PerfectBooster.Managers.BoosterImplantTemplateManager;
-using static Hikaria.PerfectBooster.Managers.CustomPerfectBoosterImplantManager;
+using static Hikaria.BoosterTweaker.Managers.BoosterImplantTemplateManager;
+using static Hikaria.BoosterTweaker.Managers.CustomPerfectBoosterImplantManager;
 
-namespace Hikaria.PerfectBooster.Features;
+namespace Hikaria.BoosterTweaker.Features;
 
 [DisallowInGameToggle]
 [EnableFeatureByDefault]
@@ -29,7 +30,7 @@ public class PerfectBooster : Feature
     public class PerfectBoosterSetting
     {
         [FSDisplayName("快速刷取")]
-        public bool EnableBoosterFarmer { get; set; } = true;
+        public bool EnableBoosterFarmer { get; set; }
         [RequiresRestart]
         [FSDisplayName("完美强化剂")]
         public bool EnablePerfectBooster { get; set; } = true;
@@ -301,7 +302,11 @@ public class PerfectBooster : Feature
     {
         private static bool Prefix()
         {
-            return false;
+            if (Settings.EnableCustomPerfectBooster)
+            {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -327,17 +332,21 @@ public class PerfectBooster : Feature
         }
     }
 
-    [ArchivePatch(typeof(ArtifactInventory), nameof(ArtifactInventory.GetArtifactCount))]
-    private class ArtifactInventory__GetArtifactCount__Patch
+    [ArchivePatch(typeof(BoosterUtils), nameof(BoosterUtils.BoosterCurrencyFromHeatAndArtifactCount))]
+    private class BoosterUtils__BoosterCurrencyFromHeatAndArtifactCount__Patch
     {
-        private static bool Prefix(ref int __result)
+        private static void Postfix(ref int __result)
         {
-            if (Settings.EnableBoosterFarmer && !Settings.EnableCustomPerfectBooster)
+            if (Settings.EnableCustomPerfectBooster)
             {
-                __result = 1000;
-                return false;
+                __result = 0;
+                return;
             }
-            return true;
+            if (Settings.EnableBoosterFarmer)
+            {
+                __result = 100000;
+                return;
+            }
         }
     }
 

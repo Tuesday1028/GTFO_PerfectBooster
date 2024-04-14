@@ -1,7 +1,7 @@
 {
   "Internal": {
     "FeatureSettingsTexts": {
-      "Hikaria.PerfectBooster.Features.PerfectBooster.Name": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster.Name": {
         "FName": {
           "English": "Perfect Booster",
           "Chinese": "完美强化剂",
@@ -16,7 +16,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.EnableBoosterFarmer": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.EnableBoosterFarmer": {
         "FSDisplayName": {
           "English": "Booster Farmer",
           "Chinese": "快速刷取",
@@ -31,7 +31,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.EnablePerfectBooster": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.EnablePerfectBooster": {
         "FSDisplayName": {
           "English": "Perfect Booster",
           "Chinese": "完美强化剂",
@@ -46,7 +46,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.DisableBoosterConsume": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.DisableBoosterConsume": {
         "FSDisplayName": {
           "English": "Disable Consume",
           "Chinese": "禁用消耗",
@@ -61,7 +61,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.EnableCustomPerfectBooster": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.EnableCustomPerfectBooster": {
         "FSDisplayName": {
           "English": "Custom Booster",
           "Chinese": "自定义强化剂",
@@ -89,7 +89,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.CreateCustomPerfectBoosterFromInventory": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.CreateCustomPerfectBoosterFromInventory": {
         "FSDisplayName": {
           "English": "Create From Inventory",
           "Chinese": "通过库存生成",
@@ -117,7 +117,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.LoadCustomPerfectBoosterFromSettings": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.LoadCustomPerfectBoosterFromSettings": {
         "FSDisplayName": {
           "English": "Load From Settings File",
           "Chinese": "通过配置文件加载",
@@ -145,7 +145,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.ApplyCustomPerfectBoosters": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.ApplyCustomPerfectBoosters": {
         "FSDisplayName": {
           "English": "Apply Custom Boosters",
           "Chinese": "应用自定义强化剂",
@@ -173,7 +173,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+PerfectBoosterSetting.CustomPerfectBoosterImplantsEntry": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+PerfectBoosterSetting.CustomPerfectBoosterImplantsEntry": {
         "FSDisplayName": {
           "English": "Custom Booster Editor",
           "Chinese": "编辑自定义强化剂",
@@ -188,7 +188,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntryListEntry.Entries": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntryListEntry.Entries": {
         "FSDisplayName": {
           "English": "Boosters",
           "Chinese": "强化剂列表",
@@ -203,7 +203,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Name": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Name": {
         "FSDisplayName": {
           "English": "Name",
           "Chinese": "名称",
@@ -218,7 +218,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Category": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Category": {
         "FSDisplayName": {
           "English": "Category",
           "Chinese": "类别",
@@ -233,7 +233,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.TemplateId": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.TemplateId": {
         "FSDisplayName": {
           "English": "TemplateId",
           "Chinese": "模板ID",
@@ -248,7 +248,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.TemplateIndex": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.TemplateIndex": {
         "FSDisplayName": {
           "English": "Template Index",
           "Chinese": "模版索引",
@@ -263,7 +263,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.EffectsGroupIndex": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.EffectsGroupIndex": {
         "FSDisplayName": {
           "English": "Effect Group Index",
           "Chinese": "效果组索引",
@@ -278,7 +278,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.ConditionsGroupIndex": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.ConditionsGroupIndex": {
         "FSDisplayName": {
           "English": "Condition Group Index",
           "Chinese": "条件组索引",
@@ -293,7 +293,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Enabled": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Enabled": {
         "FSDisplayName": {
           "English": "Status",
           "Chinese": "状态",
@@ -308,7 +308,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Templates": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterImplantEntry.Templates": {
         "FSDisplayName": {
           "English": "Available Templates",
           "Chinese": "可用模板",
@@ -323,7 +323,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterTemplateEntry.EffectsTemplates": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterTemplateEntry.EffectsTemplates": {
         "FSDisplayName": {
           "English": "Effects Templates",
           "Chinese": "效果模板",
@@ -338,7 +338,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+CustomPerfectBoosterTemplateEntry.ConditionsTemplates": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+CustomPerfectBoosterTemplateEntry.ConditionsTemplates": {
         "FSDisplayName": {
           "English": "Conditions Templates",
           "Chinese": "条件模板",
@@ -353,7 +353,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry.Index": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry.Index": {
         "FSDisplayName": {
           "English": "Index",
           "Chinese": "索引",
@@ -368,7 +368,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry.Effects": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry.Effects": {
         "FSDisplayName": {
           "English": "Effects List",
           "Chinese": "效果列表",
@@ -383,7 +383,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry+EffectEntry.Effect": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantEffectGroupPreferenceEntry+EffectEntry.Effect": {
         "FSDisplayName": {
           "English": "Effect",
           "Chinese": "效果",
@@ -398,7 +398,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry.Index": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry.Index": {
         "FSDisplayName": {
           "English": "Index",
           "Chinese": "索引",
@@ -413,7 +413,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry.Conditions": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry.Conditions": {
         "FSDisplayName": {
           "English": "Conditions List",
           "Chinese": "条件列表",
@@ -428,7 +428,7 @@
           "Korean": null
         }
       },
-      "Hikaria.PerfectBooster.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry+ConditionEntry.Condition": {
+      "Hikaria.BoosterTweaker.Features.PerfectBooster+BoosterImplantConditionGroupPreferenceEntry+ConditionEntry.Condition": {
         "FSDisplayName": {
           "English": "Cpndition",
           "Chinese": "条件",

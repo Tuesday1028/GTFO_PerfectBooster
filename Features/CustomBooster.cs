@@ -1,15 +1,17 @@
 ﻿using BoosterImplants;
+using CellMenu;
 using Clonesoft.Json;
-using Hikaria.PerfectBooster.Managers;
+using DropServer.BoosterImplants;
+using Hikaria.BoosterTweaker.Managers;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.Localization;
-using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager;
-using static Hikaria.PerfectBooster.Managers.CustomBoosterImplantManager.CustomBoosterImplant;
+using static Hikaria.BoosterTweaker.Managers.CustomBoosterImplantManager;
+using static Hikaria.BoosterTweaker.Managers.CustomBoosterImplantManager.CustomBoosterImplant;
 
-namespace Hikaria.PerfectBooster.Features;
+namespace Hikaria.BoosterTweaker.Features;
 
 [DisallowInGameToggle]
 [EnableFeatureByDefault]
@@ -279,6 +281,18 @@ public class CustomBooster : Feature
         private CustomBoosterImplant Implant { get; set; }
     }
 
+    [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.ProcessBoosterImplantEvents))]
+    private class CM_PageLoadout__ProcessBoosterImplantEvents__Patch
+    {
+        private static bool Prefix()
+        {
+            if (Settings.EnableCustomBooster)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
 
     [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.Setup))]
     private class PersistentInventoryManager__Setup__Patch
@@ -316,17 +330,16 @@ public class CustomBooster : Feature
         }
     }
 
-    [ArchivePatch(typeof(ArtifactInventory), nameof(ArtifactInventory.GetArtifactCount))]
-    private class ArtifactInventory__GetArtifactCount__Patch
+    [ArchivePatch(typeof(BoosterUtils), nameof(BoosterUtils.BoosterCurrencyFromHeatAndArtifactCount))]
+    private class BoosterUtils__BoosterCurrencyFromHeatAndArtifactCount__Patch
     {
-        private static bool Prefix(ref int __result)
+        private static void Postfix(ref int __result)
         {
             if (Settings.EnableCustomBooster)
             {
                 __result = 0;
-                return false;
+                return;
             }
-            return true;
         }
     }
 }

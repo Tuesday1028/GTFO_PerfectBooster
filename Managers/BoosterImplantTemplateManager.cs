@@ -6,7 +6,7 @@ using Localization;
 using TheArchive.Core.ModulesAPI;
 using TheArchive.Utilities;
 
-namespace Hikaria.PerfectBooster.Managers;
+namespace Hikaria.BoosterTweaker.Managers;
 
 public static class BoosterImplantTemplateManager
 {

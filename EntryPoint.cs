@@ -4,7 +4,7 @@ using TheArchive;
 using TheArchive.Core;
 using TheArchive.Core.Localization;
 
-namespace Hikaria.PerfectBooster;
+namespace Hikaria.BoosterTweaker;
 
 [BepInDependency(ArchiveMod.GUID, BepInDependency.DependencyFlags.HardDependency)]
 [BepInPlugin(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]

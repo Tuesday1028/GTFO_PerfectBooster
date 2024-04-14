@@ -1,7 +1,7 @@
 ﻿using TheArchive.Interfaces;
 using TheArchive.Loader;
 
-namespace Hikaria.PerfectBooster;
+namespace Hikaria.BoosterTweaker;
 
 internal static class Logs
 {
