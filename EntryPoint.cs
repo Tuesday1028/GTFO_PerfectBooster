@@ -1,26 +1,16 @@
-﻿using BepInEx;
-using BepInEx.Unity.IL2CPP;
-using TheArchive;
-using TheArchive.Core;
+﻿using TheArchive.Core;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Localization;
 
 namespace Hikaria.BoosterTweaker;
 
-[BepInDependency(ArchiveMod.GUID, BepInDependency.DependencyFlags.HardDependency)]
-[BepInPlugin(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]
-public class EntryPoint : BasePlugin, IArchiveModule
+[ArchiveModule(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]
+public class EntryPoint : IArchiveModule
 {
-    public override void Load()
-    {
-        Instance = this;
-
-        ArchiveMod.RegisterArchiveModule(typeof(EntryPoint));
-
-        Logs.LogMessage("OK");
-    }
-
     public void Init()
     {
+        Instance = this;
+        Logs.LogMessage("OK");
     }
 
     public void OnExit()
