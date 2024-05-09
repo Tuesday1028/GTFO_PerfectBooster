@@ -265,7 +265,7 @@ public class PerfectBooster : Feature
         {
             __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
             {
-                if (Settings.EnableCustomPerfectBooster)
+                if (Settings.EnableCustomPerfectBooster && !GameStateManager.IsReady)
                 {
                     ApplyCustomPerfectBoosterImplants();
                 }

@@ -301,7 +301,7 @@ public class CustomBooster : Feature
         {
             __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
             {
-                if (Settings.EnableCustomBooster)
+                if (Settings.EnableCustomBooster && !GameStateManager.IsReady)
                 {
                     ApplyCustomBoosterImplants();
                 }
