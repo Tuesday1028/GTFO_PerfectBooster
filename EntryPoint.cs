@@ -32,11 +32,11 @@ public class EntryPoint : IArchiveModule
 
     public static EntryPoint Instance { get; private set; }
 
-    public string ModuleGroup => "Perfect Booster";
+    public string ModuleGroup => "Booster Tweaker";
 
     public Dictionary<Language, string> ModuleGroupLanguages => new()
     {
-        { Language.Chinese, "完美强化剂" },
-        { Language.English, "Perfect Booster" }
+        { Language.Chinese, "强化剂调节" },
+        { Language.English, "Booster Tweaker" }
     };
 }
