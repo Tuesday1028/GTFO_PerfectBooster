@@ -3,6 +3,8 @@ using CellMenu;
 using Clonesoft.Json;
 using DropServer.BoosterImplants;
 using Hikaria.BoosterTweaker.Managers;
+using Hikaria.Core.Utilities;
+using Il2CppInterop.Runtime.Runtime;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -76,7 +78,6 @@ public class CustomBooster : Feature
             }
         }
     }
-
 
     public class CustomBoosterImplantEntryListEntry
     {
@@ -291,21 +292,6 @@ public class CustomBooster : Feature
                 return false;
             }
             return true;
-        }
-    }
-
-    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.Setup))]
-    private class PersistentInventoryManager__Setup__Patch
-    {
-        private static void Postfix(PersistentInventoryManager __instance)
-        {
-            __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
-            {
-                if (Settings.EnableCustomBooster && !GameStateManager.IsReady)
-                {
-                    ApplyCustomBoosterImplants();
-                }
-            });
         }
     }
 

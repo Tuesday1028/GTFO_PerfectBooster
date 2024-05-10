@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,9 @@
     </Reference>
     <Reference Include="GlobalFramework-ASM">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\interop\GlobalFramework-ASM.dll</HintPath>
+    </Reference>
+    <Reference Include="Hikaria.Core">
+      <HintPath>..\Hikaria.Core\bin\Release\net6.0\Hikaria.Core.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\core\Il2CppInterop.Runtime.dll</HintPath>

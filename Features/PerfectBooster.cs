@@ -4,6 +4,8 @@ using Clonesoft.Json;
 using DropServer.BoosterImplants;
 using GameData;
 using Hikaria.BoosterTweaker.Managers;
+using Hikaria.Core.Utilities;
+using Il2CppInterop.Runtime.Runtime;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -255,21 +257,6 @@ public class PerfectBooster : Feature
         private static void Postfix()
         {
             CustomPerfectBoosterImplants.Load();
-        }
-    }
-
-    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.Setup))]
-    private class PersistentInventoryManager__Setup__Patch
-    {
-        private static void Postfix(PersistentInventoryManager __instance)
-        {
-            __instance.OnBoosterImplantInventoryChanged += new Action(delegate ()
-            {
-                if (Settings.EnableCustomPerfectBooster && !GameStateManager.IsReady)
-                {
-                    ApplyCustomPerfectBoosterImplants();
-                }
-            });
         }
     }
 
