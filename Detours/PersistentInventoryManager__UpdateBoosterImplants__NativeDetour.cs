@@ -22,7 +22,7 @@ internal unsafe class PersistentInventoryManager__UpdateBoosterImplants__NativeD
 
     private void Detour(IntPtr instancePtr, IntPtr playerData, Il2CppMethodInfo* methodInfo)
     {
-        if (Features.PerfectBooster.Settings.EnablePerfectBooster)
+        if (Features.PerfectBooster.Settings.EnableCustomPerfectBooster)
         {
             CustomPerfectBoosterImplantManager.ApplyCustomPerfectBoosterImplants();
             return;
