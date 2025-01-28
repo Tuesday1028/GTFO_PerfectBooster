@@ -1,7 +1,6 @@
-﻿using Hikaria.BoosterTweaker.Detours;
-using Hikaria.Core.Utilities;
-using TheArchive.Core;
+﻿using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 
 namespace Hikaria.BoosterTweaker;
@@ -12,10 +11,6 @@ public class EntryPoint : IArchiveModule
 {
     public void Init()
     {
-        Instance = this;
-
-        EasyDetour.CreateAndApply<PersistentInventoryManager__UpdateBoosterImplants__NativeDetour>(out _);
-
         Logs.LogMessage("OK");
     }
 
@@ -36,14 +31,10 @@ public class EntryPoint : IArchiveModule
 
     public ArchiveLegacyPatcher Patcher { get; set; }
 
-    public static EntryPoint Instance { get; private set; }
-
-    public string ModuleGroup => "Booster Tweaker";
-
-    public Dictionary<Language, string> ModuleGroupLanguages => new()
+    public string ModuleGroup => FeatureGroups.GetOrCreateModuleGroup("Booster Tweaker", new()
     {
         { Language.Chinese, "强化剂调节" },
         { Language.English, "Booster Tweaker" }
-    };
+    });
 }
 

@@ -4,8 +4,6 @@ using Clonesoft.Json;
 using DropServer.BoosterImplants;
 using GameData;
 using Hikaria.BoosterTweaker.Managers;
-using Hikaria.Core.Utilities;
-using Il2CppInterop.Runtime.Runtime;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -16,7 +14,6 @@ using static Hikaria.BoosterTweaker.Managers.CustomPerfectBoosterImplantManager;
 
 namespace Hikaria.BoosterTweaker.Features;
 
-[DisallowInGameToggle]
 [EnableFeatureByDefault]
 public class PerfectBooster : Feature
 {
@@ -248,6 +245,22 @@ public class PerfectBooster : Feature
             [FSReadOnly]
             [FSDisplayName("条件")]
             public BoosterCondition Condition { get; set; }
+        }
+    }
+
+
+    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
+    private class PersistentInventoryManager__UpdateBoosterImplants__Patch
+    {
+        private static bool Prefix(PersistentInventoryManager __instance)
+        {
+            if (Settings.EnableCustomPerfectBooster)
+            {
+                __instance.m_boosterImplantDirtyState = PersistentInventoryManager.BoosterImplantDirtyState.UpToDate;
+                ApplyCustomPerfectBoosterImplants();
+                return false;
+            }
+            return true;
         }
     }
 

@@ -3,8 +3,6 @@ using CellMenu;
 using Clonesoft.Json;
 using DropServer.BoosterImplants;
 using Hikaria.BoosterTweaker.Managers;
-using Hikaria.Core.Utilities;
-using Il2CppInterop.Runtime.Runtime;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -15,7 +13,6 @@ using static Hikaria.BoosterTweaker.Managers.CustomBoosterImplantManager.CustomB
 
 namespace Hikaria.BoosterTweaker.Features;
 
-[DisallowInGameToggle]
 [EnableFeatureByDefault]
 [HideInModSettings]
 public class CustomBooster : Feature
@@ -280,6 +277,22 @@ public class CustomBooster : Feature
 
         [FSIgnore]
         private CustomBoosterImplant Implant { get; set; }
+    }
+
+
+    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
+    private class PersistentInventoryManager__UpdateBoosterImplants__Patch
+    {
+        private static bool Prefix(PersistentInventoryManager __instance)
+        {
+            if (Settings.EnableCustomBooster)
+            {
+                __instance.m_boosterImplantDirtyState = PersistentInventoryManager.BoosterImplantDirtyState.UpToDate;
+                ApplyCustomBoosterImplants();
+                return false;
+            }
+            return true;
+        }
     }
 
     [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.ProcessBoosterImplantEvents))]

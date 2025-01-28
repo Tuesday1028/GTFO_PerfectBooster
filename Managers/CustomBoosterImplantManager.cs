@@ -5,7 +5,7 @@ namespace Hikaria.BoosterTweaker.Managers
 {
     public static class CustomBoosterImplantManager
     {
-        public static CustomSetting<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
+        public static CustomSettings<Dictionary<BoosterImplantCategory, List<CustomBoosterImplant>>> CustomBoosterImplants { get; set; } = new("CustomBoosterImplants",
         new()
         {
             { BoosterImplantCategory.Muted, new() },

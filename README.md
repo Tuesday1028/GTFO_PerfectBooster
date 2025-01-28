@@ -12,6 +12,3 @@
  - 无负面效果
  - 正面效果增幅
  - 自定义强化剂
-
-### 插件设置
-Settings-->MOD Settings-->Perfect Booster

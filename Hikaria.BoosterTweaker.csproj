@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="BepInEx.Core">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\core\BepInEx.Core.dll</HintPath>
     </Reference>
@@ -24,7 +27,7 @@
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\interop\GlobalFramework-ASM.dll</HintPath>
     </Reference>
     <Reference Include="Hikaria.Core">
-      <HintPath>..\Hikaria.Core\bin\Release\net6.0\Hikaria.Core.dll</HintPath>
+      <HintPath>..\Hikaria.Core\Hikaria.Core\bin\Release\net6.0\Hikaria.Core.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>..\..\..\Program Files (x86)\Steam\steamapps\common\GTFO\BepInEx\core\Il2CppInterop.Runtime.dll</HintPath>
@@ -47,7 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="images\" />
     <Folder Include="Localization\" />
   </ItemGroup>
 
