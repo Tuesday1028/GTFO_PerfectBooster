@@ -5,7 +5,6 @@ using TheArchive.Core.Localization;
 
 namespace Hikaria.BoosterTweaker;
 
-[ArchiveDependency(Core.PluginInfo.GUID)]
 [ArchiveModule(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]
 public class EntryPoint : IArchiveModule
 {
