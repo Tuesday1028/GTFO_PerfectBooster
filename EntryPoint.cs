@@ -13,7 +13,7 @@ public class EntryPoint : IArchiveModule
 {
     public void Init()
     {
-        EasyDetour.CreateAndApply<PersistentInventoryManager__UpdateBoosterImplants__NativeDetour>(out _);
+        EasyDetour.CreateAndApply<PersistentInventoryManager__UpdateBoosterImplants__NativeDetour>(out s_detour);
 
         Logs.LogMessage("OK");
     }
@@ -40,5 +40,7 @@ public class EntryPoint : IArchiveModule
         { Language.Chinese, "强化剂调节" },
         { Language.English, "Booster Tweaker" }
     });
+
+    private static IEasyDetour s_detour;
 }
 
