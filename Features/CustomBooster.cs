@@ -280,7 +280,7 @@ public class CustomBooster : Feature
     }
 
 
-    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
+    //[ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
     private class PersistentInventoryManager__UpdateBoosterImplants__Patch
     {
         private static bool Prefix(PersistentInventoryManager __instance)

@@ -248,11 +248,10 @@ public class PerfectBooster : Feature
         }
     }
 
-
-    [ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
+    //[ArchivePatch(typeof(PersistentInventoryManager), nameof(PersistentInventoryManager.UpdateBoosterImplants))]
     private class PersistentInventoryManager__UpdateBoosterImplants__Patch
     {
-        private static bool Prefix(PersistentInventoryManager __instance)
+        private static bool Prefix(PersistentInventoryManager __instance, ref BoosterImplantPlayerData playerData)
         {
             if (Settings.EnableCustomPerfectBooster)
             {
