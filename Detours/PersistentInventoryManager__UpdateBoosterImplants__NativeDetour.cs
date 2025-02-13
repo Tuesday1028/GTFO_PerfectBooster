@@ -22,7 +22,6 @@ namespace Hikaria.BoosterTweaker.Detours
 
         private void Detour(IntPtr instancePtr, IntPtr playerData, Il2CppMethodInfo* methodInfo)
         {
-            Logs.LogMessage($"PersistentInventoryManager__UpdateBoosterImplants__NativeDetour");
             if (Features.PerfectBooster.Settings.EnableCustomPerfectBooster)
             {
                 CustomPerfectBoosterImplantManager.ApplyCustomPerfectBoosterImplants();
